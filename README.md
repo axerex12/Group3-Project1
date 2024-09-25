@@ -1,6 +1,7 @@
 # Ohjelmointiprojekti
 
 ### db.json
+create `db.json` in the project root that has following schema
 ```json
 {
   "host": "127.0.0.1",
