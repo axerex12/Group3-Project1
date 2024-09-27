@@ -156,23 +156,8 @@ class Database:
         :return:
         """
         for item in data:
-            # Extract column names
             columns = ','.join([str(name) for name, val in item.items()])
-
-            # Extract values and convert them to string literals, e.g. wrap in quotes if necessary
             values = ','.join([f"'{val}'" if isinstance(val, str) else str(val) for name, val in item.items()])
-
-            # Create the INSERT statement
             statement = f"INSERT INTO {table} ({columns}) VALUES ({values});"
-
-            # Print the final statement
             print(statement)
             self.cursor.execute(statement)
-
-
-
-
-
-
-
-
