@@ -60,8 +60,17 @@ def fly_menu(current_airport, distance):
     for airport in airports_near:
         print(f"Fly to {airport} by selecting ({
               airports_near.index(airport) + 1})")
-    user_input = int(input()) - 1
-    print(f"Flying to ... {airports_near[user_input]}")
+
+    # TODO: bug: allows using negative numbers
+    running = True
+    while running:
+        try:
+            user_input = int(input()) - 1
+            print(f"Flying to ... {airports_near[user_input]}")
+        except:
+            print("Invalid input!")
+            continue
+        running = False
 
     # calculate fuel usage from plane stats
 
