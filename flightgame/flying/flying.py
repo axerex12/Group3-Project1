@@ -28,16 +28,14 @@ def load_db():
     return connection
 
 
-cxc = load_db()
-
-
 def calculate_distance(current: tuple, destination: tuple):
     return distance.distance(current, destination)
 
 
+# get all airports inside certain distance from current one
 def get_airport_by_distance(current: tuple, distance):
     sql = """
-        select ident as icao, latitude_deg, longitude_deg 
+        select ident as icao, latitude_deg, longitude_deg
         from airport
         where type = "large_airport"
     """
@@ -54,17 +52,31 @@ def get_airport_by_distance(current: tuple, distance):
     return airports_near
 
 
-airports = get_airport_by_distance((20, 50), 1000)
-print(airports[:])
+def fly_menu(current_airport, distance):
+    airports_near = get_airport_by_distance(current_airport, distance)
+
+    # list all nearby airports, make the user use numbers from 1
+    # while selecting the airport since that is more natural
+    for airport in airports_near:
+        print(f"Fly to {airport} by selecting ({
+              airports_near.index(airport) + 1})")
+    user_input = int(input()) - 1
+    print(f"Flying to ... {airports_near[user_input]}")
+
+    # calculate fuel usage from plane stats
 
 
-def fly_menu():
-    print()
-
-
-def calculate_mileage():
-    print()
+def calculate_mileage(distance, plane):
+    return plane.fuel_usage * distance
 
 
 def fly_to():
-    print()
+    print("")
+
+
+if __name__ == "__main__":
+    print("Running!")
+    cxc = load_db()
+    fly_menu((51.5072, 0.1276), 50)
+    # airports = get_airport_by_distance((51.5072, 0.1276), 50)
+    # print(airports[:])
