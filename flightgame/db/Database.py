@@ -1,9 +1,6 @@
 import mysql.connector
 import json
 
-from PyQt5.sip import voidptr
-
-
 class Database:
 
     EXPECTED_SCHEMA = {
@@ -72,7 +69,7 @@ class Database:
             autocommit=True,
         )
         self.cursor = self.connection.cursor(dictionary=True)
-        #print(self.validate_database())
+        print(self.validate_database())
 
     def validate_database(self) -> bool:
         current_schema = self.get_current_schema()
@@ -85,6 +82,10 @@ class Database:
         return True
 
     def generate_alter_statements(self):
+        """
+        Generates the statements needed for changing database
+        :return:
+        """
         alter_statements = []
         original = self.get_current_schema()
         print(f"Original: {original}")
