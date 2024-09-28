@@ -10,7 +10,7 @@ calculate mileage and see if the flight completed
 get an another list of airports
 ...
 
-if at a right airport for a contract deliver the contract
+if at a right airport for a contract, deliver the contract
 '''
 
 
