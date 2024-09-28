@@ -1,5 +1,6 @@
-import mysql.connector as msql
-import flying.flying as fl
+from flightgame.db.Database import Database
+import flightgame.flying.flying as fl
 
 
-print("Hi")
+database = Database()
+print(database.get_airport_by_distance("large_airport", 500))

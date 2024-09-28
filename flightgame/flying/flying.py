@@ -1,6 +1,5 @@
-import mysql.connector
-import json
-from geopy import distance
+from flightgame.db.Database import Database
+
 
 '''
 get a list of airports that are close
@@ -11,45 +10,12 @@ get an another list of airports
 ...
 
 if at a right airport for a contract, deliver the contract
+horribly wip refactoring
 '''
-
-
-def load_db():
-    with open("./db.json") as file:
-        database = json.load(file)
-    connection = mysql.connector.connect(
-        host=database["host"],
-        port=database["port"],
-        database=database["database"],
-        username=database["username"],
-        password=database["password"],
-        autocommit=True,
-    )
-    return connection
 
 
 def calculate_distance(current: tuple, destination: tuple):
     return distance.distance(current, destination)
-
-
-# get all airports inside certain distance from current one
-def get_airport_by_distance(current: tuple, distance):
-    sql = """
-        select ident as icao, latitude_deg, longitude_deg
-        from airport
-        where type = "large_airport"
-    """
-
-    airports_near = []
-
-    with cxc.cursor(dictionary=True) as cursor:
-        cursor.execute(sql, )
-        data = cursor.fetchall()
-        for row in data:
-            airport_location = (row["latitude_deg"], row["longitude_deg"])
-            if calculate_distance(current, airport_location) < distance:
-                airports_near.append(row["icao"])
-    return airports_near
 
 
 def fly_menu(current_airport, distance):
@@ -85,7 +51,3 @@ def fly_to():
 
 if __name__ == "__main__":
     print("Running!")
-    cxc = load_db()
-    fly_menu((51.5072, 0.1276), 50)
-    # airports = get_airport_by_distance((51.5072, 0.1276), 50)
-    # print(airports[:])

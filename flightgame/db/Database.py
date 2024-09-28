@@ -1,6 +1,7 @@
 import mysql.connector
 import json
 
+
 class Database:
 
     EXPECTED_SCHEMA = {
@@ -109,7 +110,8 @@ class Database:
                         )
                     elif original_fields[col] != data_type:
                         alter_statements.append(
-                            f"ALTER TABLE {table} MODIFY COLUMN {col} {data_type}"
+                            f"ALTER TABLE {table} MODIFY COLUMN {
+                                col} {data_type}"
                         )
         return alter_statements
 
@@ -121,7 +123,7 @@ class Database:
         cursor.execute("SHOW TABLES")
         tables = cursor.fetchall()
         for row in tables:
-            table_name = row["Tables_in_flight_game_project"]
+            table_name = row["Tables_in_flight_game"]
             cursor.execute(f"DESCRIBE {table_name}")
             columns = cursor.fetchall()
 
@@ -149,6 +151,39 @@ class Database:
         self.cursor.execute(f"SELECT * FROM airport WHERE iso_country='{iso}'")
         return self.cursor.fetchall()
 
+    # get all airports inside certain distance from current one
+    def get_airport_by_distance(self, airport_type: str, distance: int):
+        # somehow we need to keep track of what id is the current game using
+        fetch_current_airport = f"""
+            select ident, latitude_deg, longitude_deg
+            from airport
+            inner join game on location = ident
+            where game.id = 1
+        """
+
+        with self.cursor as cursor:
+
+            cursor.execute(fetch_current_airport)
+            current_airport = cursor.fetchall()
+
+            # some sql voodoo to get all airports in a radius
+            sql_get_airports_in_distance = f"""
+                SELECT ident,
+                    (6371 * acos(
+                            cos(radians({current_airport[0]["latitude_deg"]})) * cos(radians(latitude_deg)) *
+                            cos(radians(longitude_deg) - radians({current_airport[0]["longitude_deg"]})) +
+                            sin(radians(
+                                {current_airport[0]["latitude_deg"]})) * sin(radians(latitude_deg))
+                    )) AS distance
+                FROM airport
+                WHERE airport.type = "{airport_type}"
+                HAVING distance <= {distance} AND distance > 0
+                ORDER BY distance;
+            """
+
+            cursor.execute(sql_get_airports_in_distance)
+            return cursor.fetchall()
+
     def add_data(self, data: list, table: str):
         """
         Add data to a table, the data needs to be in the same format
@@ -158,7 +193,8 @@ class Database:
         """
         for item in data:
             columns = ','.join([str(name) for name, val in item.items()])
-            values = ','.join([f"'{val}'" if isinstance(val, str) else str(val) for name, val in item.items()])
+            values = ','.join([f"'{val}'" if isinstance(
+                val, str) else str(val) for name, val in item.items()])
             statement = f"INSERT INTO {table} ({columns}) VALUES ({values});"
             print(statement)
             self.cursor.execute(statement)
