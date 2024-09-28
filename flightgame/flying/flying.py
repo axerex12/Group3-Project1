@@ -1,4 +1,4 @@
-from flightgame.db.Database import Database
+from db.Database import Database
 
 
 '''
@@ -14,24 +14,20 @@ horribly wip refactoring
 '''
 
 
-def calculate_distance(current: tuple, destination: tuple):
-    return distance.distance(current, destination)
-
-
-def fly_menu(current_airport, distance):
-    airports_near = get_airport_by_distance(current_airport, distance)
+def fly_menu(database: Database, distance):
+    airports_near = database.get_airport_by_distance("large_airport", distance)
 
     # list all nearby airports, make the user use numbers from 1
     # while selecting the airport since that is more natural
     for airport in airports_near:
-        print(f"Fly to {airport} by selecting ({
+        print(f"Fly to |{airport["airport"]}| in |{airport["country"]}| distance(you) {airport["distance"]:.0f} by selecting ({
               airports_near.index(airport) + 1})")
 
     # TODO: bug: allows using negative numbers
     running = True
     while running:
         try:
-            user_input = int(input()) - 1
+            user_input = int(input("Selection: ")) - 1
             print(f"Flying to ... {airports_near[user_input]}")
         except:
             print("Invalid input!")

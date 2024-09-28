@@ -96,9 +96,17 @@ class Database:
             print(fields.items())
 
             if table not in original:
+                # add all columns in a string and check if it is an id field in which case
+                # add NOT NULL AUTO_INCREMENT to get automatic id numbering
                 columns = ", ".join(
-                    [f"{col} {data_type}" for col, data_type in fields.items()]
+                    [f"{col} {data_type} NOT NULL AUTO_INCREMENT"
+                     if col == "id"
+                     else f"{col} {data_type}" for col,
+                        data_type in fields.items()]
                 )
+                # set id as primary key if found this is needed for AUTO_INCREMENT
+                if any(col == "id" for col in fields):
+                    columns += ", PRIMARY KEY (id)"
                 create_table = f"CREATE TABLE {table} ({columns})"
                 alter_statements.append(create_table)
             else:
@@ -154,8 +162,8 @@ class Database:
     # get all airports inside certain distance from current one
     def get_airport_by_distance(self, airport_type: str, distance: int):
         # somehow we need to keep track of what id is the current game using
-        fetch_current_airport = f"""
-            select ident, latitude_deg, longitude_deg
+        sql_fetch_current_airport = f"""
+            select name, ident, latitude_deg, longitude_deg
             from airport
             inner join game on location = ident
             where game.id = 1
@@ -163,12 +171,12 @@ class Database:
 
         with self.cursor as cursor:
 
-            cursor.execute(fetch_current_airport)
+            cursor.execute(sql_fetch_current_airport)
             current_airport = cursor.fetchall()
 
             # some sql voodoo to get all airports in a radius
             sql_get_airports_in_distance = f"""
-                SELECT ident,
+                SELECT country.name as country, airport.name as airport, ident,
                     (6371 * acos(
                             cos(radians({current_airport[0]["latitude_deg"]})) * cos(radians(latitude_deg)) *
                             cos(radians(longitude_deg) - radians({current_airport[0]["longitude_deg"]})) +
@@ -176,6 +184,7 @@ class Database:
                                 {current_airport[0]["latitude_deg"]})) * sin(radians(latitude_deg))
                     )) AS distance
                 FROM airport
+                inner join country on country.iso_country = airport.iso_country
                 WHERE airport.type = "{airport_type}"
                 HAVING distance <= {distance} AND distance > 0
                 ORDER BY distance;
@@ -183,6 +192,16 @@ class Database:
 
             cursor.execute(sql_get_airports_in_distance)
             return cursor.fetchall()
+
+    def get_plane(self) -> dict:
+        sql_get_plane = f"""
+        SELECT *
+        FROM plane
+
+        """
+
+        with self.cursor as cursor:
+            cursor.execute(sql_get_plane)
 
     def add_data(self, data: list, table: str):
         """
