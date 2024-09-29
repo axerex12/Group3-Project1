@@ -39,6 +39,7 @@ class Database:
             "location": "varchar(10)",
             "screen_name": "varchar(40)",
             "currency": "int(32)",
+            "fuel_amount": "int(8)",
             "rented_plane": "int(8)",
         },
         "plane": {
@@ -177,7 +178,7 @@ class Database:
             FROM airport
             inner join country on country.iso_country = airport.iso_country
             WHERE airport.type = "{airport_type}"
-            HAVING distance <= {distance} AND distance > 0
+            HAVING distance <= {distance} AND distance > 1
             ORDER BY distance;
         """
 
@@ -191,7 +192,7 @@ class Database:
         WHERE id = (
             SELECT rented_plane
             FROM game
-            WHERE screen_name = {user}
+            WHERE screen_name = "{user}"
         )
         """
 

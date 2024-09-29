@@ -31,7 +31,7 @@ def fly_menu(database: Database, distance, user):
         try:
             user_input = int(input("Selection: ")) - 1
             if user_input + 1 <= 0:
-                continue
+                raise Exception("Selection less or equal to zero!")
             fly_to(database, airports_near[user_input], user)
         except Exception as exc:
             print(exc)
