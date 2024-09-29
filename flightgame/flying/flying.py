@@ -14,9 +14,9 @@ horribly wip refactoring
 '''
 
 
-def fly_menu(database: Database, distance):
+def fly_menu(database: Database, distance, user):
     airports_near = database.get_airports_by_distance(
-        "large_airport", distance)
+        "large_airport", distance, user)
 
     # list all nearby airports, make the user use numbers from 1
     # while selecting the airport since that is more natural
@@ -30,21 +30,20 @@ def fly_menu(database: Database, distance):
     while running:
         try:
             user_input = int(input("Selection: ")) - 1
-            if user_input <= 0:
+            if user_input + 1 <= 0:
                 continue
-            fly_to(database, airports_near[user_input])
+            fly_to(database, airports_near[user_input], user)
         except Exception as exc:
             print(exc)
             continue
         running = False
 
-    # calculate fuel usage from plane stats
 
-
-def fly_to(database: Database, airport: dict):
+def fly_to(database: Database, airport: dict, user: str):
+    # need to make some kind of class to keep track of what user we are on
     print(f"Flying to |{airport["ident"]}| |{
           airport['airport']}| in |{airport['country']}")
-    database.update_location(airport["ident"], "Tomi")
+    database.update_location(airport["ident"], user)
 
 
 def calculate_mileage(distance, plane):

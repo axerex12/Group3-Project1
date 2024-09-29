@@ -153,13 +153,13 @@ class Database:
         return self.cursor.fetchall()
 
     # get all airports inside certain distance from current one
-    def get_airports_by_distance(self, airport_type: str, distance: int) -> list:
+    def get_airports_by_distance(self, airport_type: str, distance: int, user: str) -> list:
         # somehow we need to keep track of what id is the current game using
         sql_fetch_current_airport = f"""
             select name, ident, latitude_deg, longitude_deg
             from airport
             inner join game on location = ident
-            where game.id = 1
+            where screen_name = "{user}"
         """
 
         self.cursor.execute(sql_fetch_current_airport)
@@ -184,10 +184,15 @@ class Database:
         self.cursor.execute(sql_get_airports_in_distance)
         return self.cursor.fetchall()
 
-    def get_plane(self) -> dict:
+    def get_plane(self, user) -> dict:
         sql_get_plane = f"""
         SELECT *
         FROM plane
+        WHERE id = (
+            SELECT rented_plane
+            FROM game
+            WHERE screen_name = {user}
+        )
         """
 
         self.cursor.execute(sql_get_plane)
