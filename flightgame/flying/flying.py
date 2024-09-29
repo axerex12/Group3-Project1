@@ -41,8 +41,8 @@ def fly_menu(database: Database, distance, user):
 
 def fly_to(database: Database, airport: dict, user: str):
     # need to make some kind of class to keep track of what user we are on
-    print(f"Flying to |{airport["ident"]}| |{
-          airport['airport']}| in |{airport['country']}")
+    print(f"\nFlying to |{airport["ident"]}| |{
+          airport['airport']}| in |{airport['country']}\n")
     database.update_location(airport["ident"], user)
 
 
