@@ -214,11 +214,23 @@ class Database:
             print(statement)
             self.cursor.execute(statement)
 
-    def update_location(self, location: str, screen_name: str):
-        sql_update_location = f"""
-            UPDATE game
-            SET location = %s
-            WHERE screen_name = %s
+    def update_values(self, data: list, table: str, id_column="id"):
+        """
+        update data in a table, the data needs to be in the same format
+        :param data: list of dictionaries, where each dictionary is a row
+        :param table: name of the table
+        :param id_column: name of the field we use to narrow down
+        :return:
         """
 
-        self.cursor.execute(sql_update_location, (location, screen_name))
+        for item in data:
+            # Extract columns and values from the dictionary
+            columns = [f"{key} = %s" for key in item if key != id_column]
+            values = [item[key] for key in item if key != id_column]
+            id_value = item[id_column]
+
+            # Prepare the SQL update query
+            sql = f"UPDATE {table} SET {', '.join(columns)} WHERE {
+                id_column} = %s"
+            values.append(id_value)
+            self.cursor.execute(sql, values)
