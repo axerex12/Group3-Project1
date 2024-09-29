@@ -1,4 +1,4 @@
-from db.Database import Database
+from flightgame.db.Database import Database
 
 
 '''
