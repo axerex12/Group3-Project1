@@ -153,9 +153,14 @@ class Database:
         self.cursor.execute(f"SELECT * FROM airport WHERE iso_country='{iso}'")
         return self.cursor.fetchall()
 
-    # get all airports inside certain distance from current one
     def get_airports_by_distance(self, airport_type: str, distance: int, user: str) -> list:
-        # somehow we need to keep track of what id is the current game using
+        """
+        get all airports from the database that are inside certain radius from user's current loc
+        :param airport_type: limit what size of airports we are interested in
+        :param distance: radius that we use to look for new airports
+        :param user: screen_name of an user
+        :return:
+        """
         sql_fetch_current_airport = f"""
             select name, ident, latitude_deg, longitude_deg
             from airport
@@ -214,7 +219,7 @@ class Database:
             print(statement)
             self.cursor.execute(statement)
 
-    def update_values(self, data: list, table: str, id_column="id"):
+    def update_data(self, data: list, table: str, id_column="id"):
         """
         update data in a table, the data needs to be in the same format
         :param data: list of dictionaries, where each dictionary is a row

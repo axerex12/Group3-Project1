@@ -43,7 +43,7 @@ def fly_to(database: Database, airport: dict, user: str):
     # need to make some kind of class to keep track of what user we are on
     print(f"\nFlying to |{airport["ident"]}| |{
           airport['airport']}| in |{airport['country']}\n")
-    database.update_values(
+    database.update_data(
         [{"location": airport["ident"], "screen_name": user}], "game", "screen_name")
 
 
