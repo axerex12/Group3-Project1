@@ -112,8 +112,7 @@ class Database:
                         )
                     elif original_fields[col] != data_type:
                         alter_statements.append(
-                            f"ALTER TABLE {table} MODIFY COLUMN {
-                                col} {data_type}"
+                            f"ALTER TABLE {table} MODIFY COLUMN {col} {data_type}"
                         )
         return alter_statements
 
@@ -235,7 +234,6 @@ class Database:
             id_value = item[id_column]
 
             # Prepare the SQL update query
-            sql = f"UPDATE {table} SET {', '.join(columns)} WHERE {
-                id_column} = %s"
+            sql = f"UPDATE {table} SET {', '.join(columns)} WHERE {id_column} = %s"
             values.append(id_value)
             self.cursor.execute(sql, values)
