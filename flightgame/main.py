@@ -1,9 +1,9 @@
 from flightgame.db.Database import Database
 
 db = Database()
-print(db.get_airport("EFHK"))
-print(db.get_current_schema())
-print(db.generate_alter_statements())
+#print(db.get_airport("EFHK"))
+#print(db.get_current_schema())
+#print(db.generate_alter_statements())
 #print(db.get_current_schema())
 
 cargo_test = [
@@ -311,4 +311,5 @@ plane_test = [
         "max_speed": 250
     }
 ]
-db.add_data(list(plane_test), "plane")
+#db.add_data(list(cargo_test),"cargo")
+#db.add_data(list(plane_test), "plane")

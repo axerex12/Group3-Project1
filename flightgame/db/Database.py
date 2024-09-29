@@ -69,7 +69,7 @@ class Database:
             autocommit=True,
         )
         self.cursor = self.connection.cursor(dictionary=True)
-        print(self.validate_database())
+        #print(self.validate_database())
 
     def validate_database(self) -> bool:
         current_schema = self.get_current_schema()
@@ -159,6 +159,6 @@ class Database:
         for item in data:
             columns = ','.join([str(name) for name, val in item.items()])
             values = ','.join([f"'{val}'" if isinstance(val, str) else str(val) for name, val in item.items()])
-            statement = f"INSERT INTO {table} ({columns}) VALUES ({values});"
+            statement = f"INSERT IGNORE INTO {table} ({columns}) VALUES ({values});"
             print(statement)
             self.cursor.execute(statement)
