@@ -33,7 +33,7 @@ class Database:
             "keywords": "varchar(40)",
         },
         "game": {
-            "id": "varchar(40)",
+            "id": "int(11)",
             "co2_consumed": "int(8)",
             "co2_budget": "int(8)",
             "location": "varchar(10)",
@@ -96,17 +96,10 @@ class Database:
             print(fields.items())
 
             if table not in original:
-                # add all columns in a string and check if it is an id field in which case
-                # add NOT NULL AUTO_INCREMENT to get automatic id numbering
                 columns = ", ".join(
-                    [f"{col} {data_type} NOT NULL AUTO_INCREMENT"
-                     if col == "id"
-                     else f"{col} {data_type}" for col,
+                    [f"{col} {data_type}" for col,
                         data_type in fields.items()]
                 )
-                # set id as primary key if found this is needed for AUTO_INCREMENT
-                if any(col == "id" for col in fields):
-                    columns += ", PRIMARY KEY (id)"
                 create_table = f"CREATE TABLE {table} ({columns})"
                 alter_statements.append(create_table)
             else:
