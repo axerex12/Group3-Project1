@@ -21,8 +21,7 @@ def fly_menu(database: Database, distance, user):
     # list all nearby airports, make the user use numbers from 1
     # while selecting the airport since that is more natural
     for airport in airports_near:
-        print(f"Fly to |{airport["airport"]}| in |{airport["country"]}| distance(you) {airport["distance"]:.0f} by selecting ({
-              airports_near.index(airport) + 1})")
+        print(f"Fly to |{airport['airport']}| in |{airport['country']}| distance(you) {airport['distance']:.0f} by selecting ({airports_near.index(airport) + 1})")
 
     # TODO: bug: allows using negative numbers
 
@@ -41,10 +40,8 @@ def fly_menu(database: Database, distance, user):
 
 def fly_to(database: Database, airport: dict, user: str):
     # need to make some kind of class to keep track of what user we are on
-    print(f"\nFlying to |{airport["ident"]}| |{
-          airport['airport']}| in |{airport['country']}\n")
-    database.update_data(
-        [{"location": airport["ident"], "screen_name": user}], "game", "screen_name")
+    print(f"\nFlying to |{airport['ident']}| |{ airport['airport']}| in |{airport['country']}\n")
+    database.update_data( [{"location": airport["ident"], "screen_name": user}], "game", "screen_name")
 
 
 def calculate_mileage(distance, plane):
