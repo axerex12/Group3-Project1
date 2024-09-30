@@ -1,6 +1,7 @@
 import mysql.connector
 import json
 
+
 class Database:
 
     def __init__(self):
@@ -66,7 +67,6 @@ class Database:
                 rented_plane INT(8),
                 fuel_amount int (8),
                 FOREIGN KEY (rented_plane) REFERENCES plane(id))
-
         """)
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS cargo (
@@ -103,6 +103,57 @@ class Database:
         self.cursor.execute(f"SELECT * FROM airport WHERE iso_country='{iso}'")
         return self.cursor.fetchall()
 
+    def get_airports_by_distance(self, airport_type: str, distance: int, user: str) -> list:
+        """
+        get all airports from the database that are inside certain radius from user's current loc
+        :param airport_type: limit what size of airports we are interested in
+        :param distance: radius that we use to look for new airports
+        :param user: screen_name of an user
+        :return:
+        """
+        sql_fetch_current_airport = f"""
+            select name, ident, latitude_deg, longitude_deg
+            from airport
+            inner join game on location = ident
+            where screen_name = "{user}"
+        """
+
+        self.cursor.execute(sql_fetch_current_airport)
+        current_airport = self.cursor.fetchall()[0]
+
+        # some sql voodoo to get all airports in a radius
+        sql_get_airports_in_distance = f"""
+            SELECT country.name as country, airport.name as airport, ident,
+                (6371 * acos(
+                        cos(radians({current_airport["latitude_deg"]})) * cos(radians(latitude_deg)) *
+                        cos(radians(longitude_deg) - radians({current_airport["longitude_deg"]})) +
+                        sin(radians(
+                            {current_airport["latitude_deg"]})) * sin(radians(latitude_deg))
+                )) AS distance
+            FROM airport
+            inner join country on country.iso_country = airport.iso_country
+            WHERE airport.type = "{airport_type}"
+            HAVING distance <= {distance} AND distance > 1
+            ORDER BY distance;
+        """
+
+        self.cursor.execute(sql_get_airports_in_distance)
+        return self.cursor.fetchall()
+
+    def get_plane(self, user) -> dict:
+        sql_get_plane = f"""
+        SELECT *
+        FROM plane
+        WHERE id = (
+            SELECT rented_plane
+            FROM game
+            WHERE screen_name = "{user}"
+        )
+        """
+
+        self.cursor.execute(sql_get_plane)
+        return self.cursor.fetchall()[0]
+
     def add_data(self, data: list, table: str):
         """
         Add data to a table, the data needs to be in the same format
@@ -114,5 +165,29 @@ class Database:
             columns = ','.join([str(name) for name, val in item.items()])
             values = ','.join([f"'{val}'" if isinstance(val, str) else str(val) for name, val in item.items()])
             statement = f"INSERT IGNORE INTO {table} ({columns}) VALUES ({values});"
+            values = ','.join([f"'{val}'" if isinstance(
+                val, str) else str(val) for name, val in item.items()])
+            statement = f"INSERT INTO {table} ({columns}) VALUES ({values});"
             print(statement)
             self.cursor.execute(statement)
+
+    def update_data(self, data: list, table: str, id_column="id"):
+        """
+        update data in a table, the data needs to be in the same format
+        :param data: list of dictionaries, where each dictionary is a row
+        :param table: name of the table
+        :param id_column: name of the field we use to narrow down
+        :return:
+        """
+
+        for item in data:
+            # Extract columns and values from the dictionary
+            columns = [f"{key} = %s" for key in item if key != id_column]
+            values = [item[key] for key in item if key != id_column]
+            id_value = item[id_column]
+
+            # Prepare the SQL update query
+            sql = f"UPDATE {table} SET {', '.join(columns)} WHERE {
+                id_column} = %s"
+            values.append(id_value)
+            self.cursor.execute(sql, values)

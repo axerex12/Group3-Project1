@@ -1,4 +1,8 @@
 # Default ignored files
-/.idea
-/.venv
+/shelf/
+/.idea/workspace.xml
 /db.json
+.venv
+.vscode
+**/__pycache__
+*.*

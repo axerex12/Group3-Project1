@@ -313,3 +313,4 @@ plane_test = [
 ]
 #db.add_data(list(cargo_test),"cargo")
 #db.add_data(list(plane_test), "plane")
+print("Hi")
