@@ -14,16 +14,14 @@ horribly wip refactoring
 '''
 
 
-def fly_menu(database: Database, distance, user):
-    airports_near = database.get_airports_by_distance(
-        "large_airport", distance, user)
+def fly_menu(db: Database, airport_type, distance, user):
+    airports_near = db.get_airports_by_distance(
+        airport_type, distance, user)
 
     # list all nearby airports, make the user use numbers from 1
     # while selecting the airport since that is more natural
     for airport in airports_near:
         print(f"Fly to |{airport['airport']}| in |{airport['country']}| distance(you) {airport['distance']:.0f} by selecting ({airports_near.index(airport) + 1})")
-
-    # TODO: bug: allows using negative numbers
 
     running = True
     while running:
@@ -31,21 +29,27 @@ def fly_menu(database: Database, distance, user):
             user_input = int(input("Selection: ")) - 1
             if user_input + 1 <= 0:
                 raise Exception("Selection less or equal to zero!")
-            fly_to(database, airports_near[user_input], user)
+            fly_to(db, airports_near[user_input], user)
+            # update spent fuel // currently it just puts the amount of spend fuel as fuel_amount
+            # db.update_data([{"fuel_amount": calculate_spent_fuel(db, airports_near[user_input]["distance"], user), "screen_name": user}], "game", "screen_name")
+            db.update_fuel_amount(calculate_spent_fuel(db, airports_near[user_input]["distance"], user), "-", user)
         except Exception as exc:
             print(exc)
             continue
         running = False
 
 
-def fly_to(database: Database, airport: dict, user: str):
+def fly_to(db: Database, airport: dict, user: str):
     # need to make some kind of class to keep track of what user we are on
     print(f"\nFlying to |{airport['ident']}| |{ airport['airport']}| in |{airport['country']}\n")
-    database.update_data( [{"location": airport["ident"], "screen_name": user}], "game", "screen_name")
+    db.update_data( [{"location": airport["ident"], "screen_name": user}], "game", "screen_name")
 
 
-def calculate_mileage(distance, plane):
-    return plane.fuel_usage * distance
+def calculate_spent_fuel(db: Database, distance, user) -> int:
+    plane: dict = db.get_plane(user)
+    # return used fuel based on L/km
+    print(plane)
+    return int(plane["fuel_consumption"] * distance / 100)
 
 
 if __name__ == "__main__":

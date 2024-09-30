@@ -3,6 +3,6 @@ import flightgame.flying.flying as fl
 
 db = Database()
 while True:
-    fl.fly_menu(db, distance=500, user="heini")
-    print(db.get_plane("heini"))
+    fl.fly_menu(db, distance=500, airport_type="large_airport", user="heini")
+    # print(db.get_plane("heini"))
 # db.update_values([{"type": "helicopter", "id": 1}], "plane", "id")
