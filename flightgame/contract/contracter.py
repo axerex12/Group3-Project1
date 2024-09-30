@@ -1,4 +1,3 @@
-from flightgame.db.Database import Database
 import random
 import mysql.connector
 
