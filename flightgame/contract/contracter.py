@@ -10,10 +10,11 @@ Generoi kontracti että minne pitää mennä ja mikä cargo ja paljonko siitä s
 def contract_generator():
     contracts = []
     for i in range(3):
+        # random raha määrä contractille!
         random_money_value = random.randint(1000, 1000000)
         airport = db.get_random_airport(1)[0]
         cargo = db.get_random_cargo(1)[0]
-# random raha määrä contractille!
+
 
         contract = {
             "destination_id": airport["ident"],  # lentokentän ident
