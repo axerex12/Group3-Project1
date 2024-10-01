@@ -15,7 +15,7 @@ player = input('type player name: ')
 game_over = False
 score = 0
 
-current_airport = db.get_random_airport(1)[0]
+start_airport = db.get_random_airport(1)[0]
 
 
 
