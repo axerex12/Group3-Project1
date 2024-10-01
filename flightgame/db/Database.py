@@ -6,7 +6,7 @@ import json
 class Database:
 
     def __init__(self):
-        with open("../db.json") as file:
+        with open("../../db.json") as file:
             database = json.load(file)
         self.connection = mysql.connector.connect(
             host=database["host"],
