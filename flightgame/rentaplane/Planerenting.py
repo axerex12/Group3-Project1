@@ -1,34 +1,39 @@
 from flightgame.db.Database import Database
 
-db = Database()
-#valitsee randomin lentokoneen
-def plane_chooser():
-    random_plane = db.get_random_plane(1)
-    plane_price = (random_plane[2] + random_plane[3]) * 50
-    random_plane[4] = plane_price
-    return random_plane
+class Planerenting:
+    # valitsee randomin lentokoneen
+    def plane_chooser(self, db: Database, amount: int) -> list:
+        x = 0
+        random_planes = db.get_random_plane(amount)
+        while x < amount:
+            plane_fc = random_planes[x]['fuel_consumption']
+            plane_ms = random_planes[x]['max_speed']
+            plane_price = int(plane_fc) + int(plane_ms) * 50
+            random_planes[x].update({"price": plane_price})
+            x += 1
+        return random_planes
 
-def plane_format(random_plane, order_id):
-    print(f"Vehicle type: {random_plane[1]}\nFuel consumption: {random_plane[2]}\nMax speed: {random_plane[3]}\nRenting Price: {random_plane[4]}\nID: {order_id}")
+    def plane_format(self, random_plane: dict, order_id: int):
+        print(
+            f"Vehicle type: {random_plane['type']}\nFuel consumption: {random_plane['fuel_consumption']}\nMax speed: {random_plane['max_speed']}\nRenting Price: {random_plane['price']}\nID: {order_id}")
 
-def renting_menu():
-    i = 0
-    j = 0
-    max_planes = 3
-    planes = []
-    while i < max_planes:
-        planes[i] = plane_chooser()
-        plane_format(planes[i],i+1)
-        i += 1
-    while True:
-        try:
-            userInput = int(input("Which plane would you like to rent? "))
-        except ValueError:
-            print("Not an integer! Try again!")
-            continue
-        else:
-            if (userInput <= 0) and (userInput > max_planes):
-                print("Not a valid index! Try again!")
+    def renting_menu(self, db: Database):
+        max_planes = 3
+        planes = self.plane_chooser(db, max_planes)
+        i = 0
+        while i < max_planes:
+            self.plane_format(planes[i], i + 1)
+            i += 1
+        while True:
+            try:
+                userInput = int(input("Which plane would you like to rent? "))
+            except ValueError:
+                print("Not an integer! Try again!")
                 continue
             else:
-                print(planes[userInput-1])
+                if (userInput <= 0) and (userInput > max_planes):
+                    print("Not a valid index! Try again!")
+                    continue
+                else:
+                    print(planes[userInput - 1])  # Just shows what was chosen for now
+                    break
