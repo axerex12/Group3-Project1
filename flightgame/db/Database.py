@@ -179,6 +179,10 @@ class Database:
         self.cursor.execute(sql_get_plane)
         return self.cursor.fetchall()[0]
 
+    def get_random_plane(self, amount: int) -> list:
+        self.cursor.execute(f"SELECT * FROM plane ORDER BY RAND() LIMIT {amount}")
+        return self.cursor.fetchall()
+
     def add_data(self, data: list, table: str):
         """
         Add data to a table, the data needs to be in the same format
