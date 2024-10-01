@@ -47,7 +47,7 @@ def fly_to(db: Database, airport: dict, user: str):
 
 def calculate_spent_fuel(db: Database, distance, user) -> int:
     plane: dict = db.get_plane(user)
-    # return used fuel based on L/km
+    # return used fuel based on L/100km
     print(plane)
     return int(plane["fuel_consumption"] * distance / 100)
 
