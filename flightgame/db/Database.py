@@ -9,8 +9,6 @@ class Database:
 
     def __init__(self):
         current_dir = os.path.dirname(__file__)
-
-        # Construct the path to db.json
         db_path = os.path.join(current_dir, '..', '..', 'db.json')
         print(current_dir)
         print(db_path)
