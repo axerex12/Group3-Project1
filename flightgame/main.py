@@ -156,4 +156,4 @@ planes = [
     }
 ]
 
-db.add_data(planes,"plane")
+#db.add_data(planes,"plane")
