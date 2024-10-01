@@ -1,10 +1,12 @@
 import random
 import mysql.connector
+import flightgame.db.Database
+from flightgame.db.Database import Database
+
+db = Database()
 
 '''
-
 Generoi kontracti että minne pitää mennä ja mikä cargo ja paljonko siitä saa
-
 '''
 #valitsee random lentökentän id
 def contract_generator():
