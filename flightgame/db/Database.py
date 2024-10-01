@@ -161,6 +161,11 @@ class Database:
         return self.cursor.fetchall()
 
     def get_plane(self, user) -> dict:
+        """
+        get the current plane user is flying from the database
+        :param user: screen_name of an user
+        :return:
+        """
         sql_get_plane = f"""
         SELECT *
         FROM plane
@@ -189,8 +194,6 @@ class Database:
             print(statement)
             self.cursor.execute(statement)
 
-
-
     def update_data(self, data: list, table: str, id_column="id"):
         """
         update data in a table, the data needs to be in the same format
@@ -210,3 +213,20 @@ class Database:
             sql = f"UPDATE {table} SET {', '.join(columns)} WHERE {id_column} = %s"
             values.append(id_value)
             self.cursor.execute(sql, values)
+    
+    def update_fuel_amount(self, fuel_amount, operator, user):
+        """
+        update the fuel amount
+        :param fuel_amount: amount of fuel to be added or subtracted
+        :operator: "+" or "-" to subtract or add
+        :user: screen_name of the user
+        """
+        sql_update_fuel_amount = f"""
+                UPDATE game
+                SET fuel_amount = fuel_amount {operator} {fuel_amount}
+                WHERE screen_name = "{user}"
+            """
+        if fuel_amount > 0 and (operator == "+" or operator == "-"):
+            self.cursor.execute(sql_update_fuel_amount)
+        else:
+            return Exception("Incorrect operator or fuel amount")

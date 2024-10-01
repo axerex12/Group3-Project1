@@ -1,5 +1,5 @@
-import flightgame.db.Database
 from flightgame.db.Database import Database
+import flightgame.flying.flying as fl
 
 db = Database()
 
@@ -157,3 +157,7 @@ planes = [
 ]
 
 #db.add_data(planes,"plane")
+while True:
+    fl.fly_menu(db, distance=500, airport_type="large_airport", user="heini")
+    # print(db.get_plane("heini"))
+# db.update_values([{"type": "helicopter", "id": 1}], "plane", "id")
