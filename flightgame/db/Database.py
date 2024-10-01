@@ -1,3 +1,5 @@
+from os.path import curdir
+
 import mysql.connector
 import json
 
@@ -139,6 +141,17 @@ class Database:
         self.cursor.execute(sql_get_airports_in_distance)
         return self.cursor.fetchall()
 
+    def get_cargo(self, cargo_id: int) -> dict:
+        self.cursor.execute(f"SELECT * FROM cargo WHERE id={cargo_id}")
+        return self.cursor.fetchone()
+
+    def get_cargo_in_game(self, game_id: int) -> list:
+        self.cursor.execute(f"""SELECT cargo_id 
+                                FROM cargo_list 
+                                WHERE game_id={game_id}
+                            """)
+        return self.cursor.fetchall()
+
     def get_plane(self, user) -> dict:
         sql_get_plane = f"""
         SELECT *
@@ -167,6 +180,8 @@ class Database:
             statement = f"INSERT INTO {table} ({columns}) VALUES ({values});"
             print(statement)
             self.cursor.execute(statement)
+
+
 
     def update_data(self, data: list, table: str, id_column="id"):
         """

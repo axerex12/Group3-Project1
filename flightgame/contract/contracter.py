@@ -2,9 +2,7 @@ import random
 import mysql.connector
 
 '''
-
 Generoi kontracti että minne pitää mennä ja mikä cargo ja paljonko siitä saa
-
 '''
 #valitsee random lentökentän id
 def contract_generator():
