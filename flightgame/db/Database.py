@@ -95,6 +95,10 @@ class Database:
         self.cursor.execute(f"SELECT * FROM airport WHERE ident='{icao}'")
         return self.cursor.fetchall()[0]
 
+    def get_random_airport(self, amount: int) -> list:
+        self.cursor.execute(f"SELECT * FROM airport ORDER BY RAND() LIMIT {amount}")
+        return self.cursor.fetchall()
+
     def get_airports_by_iso(self, iso: str) -> list:
         """
         Fetch all airport from country by country's iso code
@@ -144,6 +148,10 @@ class Database:
     def get_cargo(self, cargo_id: int) -> dict:
         self.cursor.execute(f"SELECT * FROM cargo WHERE id={cargo_id}")
         return self.cursor.fetchone()
+
+    def get_random_cargo(self, amount: int) -> list:
+        self.cursor.execute(f"SELECT * FROM cargo ORDER BY RAND() LIMIT {amount}")
+        return self.cursor.fetchall()
 
     def get_cargo_in_game(self, game_id: int) -> list:
         self.cursor.execute(f"""SELECT cargo_id 
