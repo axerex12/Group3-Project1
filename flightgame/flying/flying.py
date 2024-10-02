@@ -18,6 +18,7 @@ class Flying:
     def __init__(self) -> None:
         self.db = Database()
         self.time_minutes = 0
+        self.refill_amount = 0
 
     def fly_menu(self, airport_type, distance, user):
         # encounter = encounters.Encounter()
@@ -27,8 +28,12 @@ class Flying:
 
         # list all nearby airports, make the user use numbers from 1
         # while selecting the airport since that is more natural
+        fuel_refill_list = []
         for airport in airports_near:
-            print(f"Fly to |{airport['airport']}| in |{airport['country']}| distance(you) {airport['distance']:.0f} by selecting ({airports_near.index(airport) + 1})")
+            # give random amount of fuel to refill at airports
+            fuel_refill_amount = rd.randint(200,1000)
+            fuel_refill_list.append(fuel_refill_amount)
+            print(f"Fly to |{airport['airport']}| in |{airport['country']}| distance {airport['distance']:.0f} refill's fuel {fuel_refill_amount} by selecting ({airports_near.index(airport) + 1})")
 
         running = True
         while running:
@@ -38,12 +43,11 @@ class Flying:
                     raise Exception("Selection less or equal to zero!")
                 selected_airport = airports_near[user_input]
                 # travel to the selected airport
-                self.fly_to(self.db, selected_airport, user)
+                self.fly_to(selected_airport, user)
 
                 # encounter tähän väliin tai fly_to mukaan
                 if rd.randint(0, 6) == 6:
                     print("ENCOUNTER")
-
 
                 # id INT(8),
                 # type VARCHAR(40),
@@ -51,13 +55,14 @@ class Flying:
                 # max_speed INT(16),
                 # PRIMARY KEY (id)
 
-
                 # d/v = t calculating time spend flying
                 self.time_minutes +=  selected_airport["distance"] / self.db.get_plane(user)["max_speed"] * 60
+                print(f"\nTime spent flying: {self.time_minutes} minutes\n")
                     
                 # fly_to olis varmaan parempi koti tälle
-                # update spent fuel // currently it just puts the amount of spend fuel as fuel_amount
                 self.db.update_fuel_amount(self.calculate_spent_fuel(selected_airport["distance"], user), "-", user)
+                # add the fuel amount specific to the airport
+                self.db.update_fuel_amount(fuel_refill_list[user_input], "+", user)
             except Exception as exc:
                 print(exc)
                 continue
