@@ -69,8 +69,7 @@ class Database:
             ALTER TABLE game 
                 ADD COLUMN IF NOT EXISTS (currency INT(32),
                 rented_plane INT(8),
-                fuel_amount INT(8),
-                current_day INT(32),
+                fuel_amount int (8),
                 FOREIGN KEY (rented_plane) REFERENCES plane(id))
         """)
         cursor.execute("""
@@ -183,10 +182,6 @@ class Database:
         self.cursor.execute(sql_get_plane)
         return self.cursor.fetchall()[0]
 
-    def get_random_plane(self, amount: int) -> list:
-        self.cursor.execute(f"SELECT * FROM plane ORDER BY RAND() LIMIT {amount}")
-        return self.cursor.fetchall()
-
     def add_data(self, data: list, table: str):
         """
         Add data to a table, the data needs to be in the same format
@@ -220,26 +215,14 @@ class Database:
             # Prepare the SQL update query
             sql = f"UPDATE {table} SET {', '.join(columns)} WHERE {id_column} = %s"
             values.append(id_value)
-            print(id_value)
             self.cursor.execute(sql, values)
-
-    def set_plane(self, user, plane_id, price):
-        """
-        get the current plane user is flying from the database
-        :param user: screen_name of an user
-        :param plane_id: id of the plane in planes table
-        :return:
-        """
-        sql_set_plane = f"UPDATE game SET rented_plane = {plane_id}, currency = currency-{price} WHERE screen_name = '{user}'"
-
-        self.cursor.execute(sql_set_plane)
     
     def update_fuel_amount(self, fuel_amount, operator, user):
         """
         update the fuel amount
         :param fuel_amount: amount of fuel to be added or subtracted
-        :param operator: "+" or "-" to subtract or add
-        :param user: screen_name of the user
+        :operator: "+" or "-" to subtract or add
+        :user: screen_name of the user
         """
         sql_update_fuel_amount = f"""
                 UPDATE game
@@ -250,33 +233,5 @@ class Database:
             self.cursor.execute(sql_update_fuel_amount)
         else:
             return Exception("Incorrect operator or fuel amount")
-
-    def fetch_data(self, table):
-        """
-        get the whole table from the database
-        :param table: name of the table
-        :return:
-        """
-        sql_get_plane = f"""
-            SELECT *
-            FROM {table}
-            """
-        self.cursor.execute(sql_get_plane)
         return self.cursor.fetchall()
 
-    def fetch_data_row(self, table, column, operator, data):
-        """
-        get the specific row from a table from the database
-        :param table: name of the table
-        :param column: the specific column
-        :param operator: using default SQL operators
-        :param data: data being looked for in the column
-        :return:
-        """
-        sql_get_plane = f"""
-            SELECT *
-            FROM {table}
-            WHERE {column} {operator} {data}
-            """
-        self.cursor.execute(sql_get_plane)
-        return self.cursor.fetchall()
