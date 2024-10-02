@@ -61,13 +61,12 @@ class Encounter:
 		print(self.name)
 
 class EncounterClient:
-	def __init__(self, database: Database):
+	def __init__(self):
 		current_dir = os.path.dirname(__file__)
 		enc_path = os.path.join(current_dir, '..', '..', 'encounters.json')
 		with open(enc_path) as file:
 			encounters = json.load(file)["random_encounters"]
 		self.encounters_list = self.load_encounters(encounters=encounters)
-		self.database = database
 
 	def load_encounters(self, encounters: list) -> list:
 		encounters_list = []
@@ -87,5 +86,5 @@ class EncounterClient:
 
 if __name__ == "__main__":
 	db = Database()
-	encClient = EncounterClient(db)
+	encClient = EncounterClient()
 	print(encClient.random_encounter().start_encounter())

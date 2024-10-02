@@ -2,6 +2,8 @@ from flightgame.db.Database import Database
 from flightgame.flying import encounters
 import random as rd
 
+from flightgame.flying.encounters import EncounterClient
+
 '''
 get a list of airports that are close
 select an airport to fly to
@@ -18,6 +20,7 @@ class Flying:
     def __init__(self) -> None:
         self.db = Database()
         self.time_minutes = 0
+        self.encounter_client = EncounterClient()
 
     def fly_menu(self, airport_type, distance, user):
         # encounter = encounters.Encounter()
@@ -72,7 +75,7 @@ class Flying:
         """
         returns midpoint of twoo coordinates
         :param origin: origin point
-        :param destinatio: destination point
+        :param destination: destination point
         :return:
         """
         x = (origin[0] + destination[0]) / 2
@@ -85,6 +88,12 @@ class Flying:
         # return used fuel based on L/100km
         return int(plane["fuel_consumption"] * distance / 100)
 
+    def handle_encounter(self, enc_data: tuple, coords: tuple):
+        success = enc_data[0]
+        time_added = enc_data[1]
+        action = enc_data[2]
+        print(enc_data)
+        self.db.get_airport_by_coords(coords[0],coords[1])
 
 if __name__ == "__main__":
     print("Running!")

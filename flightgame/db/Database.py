@@ -1,5 +1,3 @@
-from os.path import curdir
-
 import mysql.connector
 import json
 import os
@@ -147,6 +145,10 @@ class Database:
 
         self.cursor.execute(sql_get_airports_in_distance)
         return self.cursor.fetchall()
+
+    def get_airport_by_coords(self,lat, lon):
+        self.cursor.execute(f"SELECT * FROM airport WHERE lat='{lat},lon={lon}'")
+        return self.cursor.fetchone()
 
     def get_cargo(self, cargo_id: int) -> dict:
         self.cursor.execute(f"SELECT * FROM cargo WHERE id={cargo_id}")
