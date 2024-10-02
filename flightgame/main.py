@@ -1,5 +1,8 @@
 from flightgame.db.Database import Database
 import flightgame.flying.flying as fl
+from flightgame.flying.encounters import EncounterClient
+from flightgame.rentaplane.Planerenting import Planerenting
+
 db = Database()
 enc = EncounterClient(db)
 
