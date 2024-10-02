@@ -15,9 +15,11 @@ class Planerenting:
 
     def plane_format(self, random_plane: dict, order_id: int):
         print(
-            f"Vehicle type: {random_plane['type']}\nFuel consumption: {random_plane['fuel_consumption']}\nMax speed: {random_plane['max_speed']}\nRenting Price: {random_plane['price']}\nID: {order_id}")
+            f"Vehicle type: {random_plane['type']}\nFuel consumption: {random_plane['fuel_consumption']}\nMax speed: {random_plane['max_speed']}\nRenting Price weekly: {random_plane['price']}\nID: {order_id}"
+            f"\n#|---|---|---|---|---|#")
 
     def renting_menu(self, db: Database):
+        print("Welcome to plane-to-succeed rental! Here's our current selection:")
         max_planes = 3
         planes = self.plane_chooser(db, max_planes)
         i = 0
