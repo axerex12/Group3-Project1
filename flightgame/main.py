@@ -1,8 +1,10 @@
 from flightgame.db.Database import Database
 import flightgame.flying.flying as fl
+from flightgame.flying import encounters
+from flightgame.flying.encounters import EncounterClient
 
 db = Database()
-
+enc = EncounterClient(db)
 cargo = [
     {
         "id": 1,
@@ -312,7 +314,10 @@ planes = [
 
 #db.add_data(cargo,"cargo")
 #db.add_data(planes,"plane")
+
 while True:
     fl.fly_menu(db, distance=500, airport_type="large_airport", user="heini")
+    break
     # print(db.get_plane("heini"))
 # db.update_values([{"type": "helicopter", "id": 1}], "plane", "id")
+enc2 = encounters

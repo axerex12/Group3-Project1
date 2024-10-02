@@ -1,7 +1,7 @@
 {
   "random_encounters": [
     {
-      "type": "Weather and Environmental Challenges",
+      "type": "Weather",
       "encounters": [
         {
           "name": "Storms and Turbulence",
@@ -9,26 +9,47 @@
           "reaction_options": [
             {
               "option": "Fly through the storm",
+              "type": "Continue",
               "outcome": {
                 "success_chance": 0.5,
-                "success": "You manage to navigate through the storm, but the rough weather delays your delivery slightly.",
-                "failure": "The turbulence causes damage to your cargo and delays your delivery significantly. Repair costs are incurred."
+                "success": {
+                  "description": "You manage to navigate through the storm, but the rough weather delays your delivery slightly.",
+                  "time_penalty_minutes": 15
+                },
+                "failure": {
+                  "description": "The turbulence causes damage to your cargo and delays your delivery significantly. Repair costs are incurred.",
+                  "time_penalty_minutes": 60
+                }
               }
             },
             {
               "option": "Fly around the storm",
+              "type": "Divert",
               "outcome": {
                 "success_chance": 0.8,
-                "success": "You avoid the storm entirely, but it adds some extra time to your route.",
-                "failure": "A miscalculation in your new route adds a significant delay and increases fuel consumption."
+                "success": {
+                  "description": "You avoid the storm entirely, but it adds some extra time to your route.",
+                  "time_penalty_minutes": 30
+                },
+                "failure": {
+                  "description": "A miscalculation in your new route adds a significant delay and increases fuel consumption.",
+                  "time_penalty_minutes": 90
+                }
               }
             },
             {
               "option": "Land and wait for the storm to pass",
+              "type": "Land",
               "outcome": {
                 "success_chance": 1.0,
-                "success": "You safely land at a nearby airstrip and wait for the storm to pass, though you lose time waiting.",
-                "failure": "N/A"
+                "success": {
+                  "description": "You safely land at a nearby airstrip and wait for the storm to pass, though you lose time waiting.",
+                  "time_penalty_minutes": 120
+                },
+                "failure": {
+                  "description": "N/A",
+                  "time_penalty_minutes": 0
+                }
               }
             }
           ]
@@ -39,26 +60,47 @@
           "reaction_options": [
             {
               "option": "Activate de-icing system",
+              "type": "Wait",
               "outcome": {
                 "success_chance": 0.9,
-                "success": "The de-icing system works perfectly, and the ice melts away.",
-                "failure": "The de-icing system malfunctions, and you lose engine power temporarily, causing a rough landing."
+                "success": {
+                  "description": "The de-icing system works perfectly, and the ice melts away.",
+                  "time_penalty_minutes": 10
+                },
+                "failure": {
+                  "description": "The de-icing system malfunctions, and you lose engine power temporarily, causing a rough landing.",
+                  "time_penalty_minutes": 90
+                }
               }
             },
             {
               "option": "Descend to a lower altitude",
+              "type": "Continue",
               "outcome": {
                 "success_chance": 0.7,
-                "success": "You successfully descend into warmer air, melting the ice.",
-                "failure": "The ice worsens during the descent, and you are forced to make an emergency landing."
+                "success": {
+                  "description": "You successfully descend into warmer air, melting the ice.",
+                  "time_penalty_minutes": 20
+                },
+                "failure": {
+                  "description": "The ice worsens during the descent, and you are forced to make an emergency landing.",
+                  "time_penalty_minutes": 120
+                }
               }
             },
             {
               "option": "Continue flying and hope the ice melts",
+              "type": "Continue",
               "outcome": {
                 "success_chance": 0.3,
-                "success": "The ice melts on its own, and the flight continues normally.",
-                "failure": "The ice buildup becomes critical, and you lose control of the plane, leading to a crash landing."
+                "success": {
+                  "description": "The ice melts on its own, and the flight continues normally.",
+                  "time_penalty_minutes": 0
+                },
+                "failure": {
+                  "description": "The ice buildup becomes critical, and you lose control of the plane, leading to a crash landing.",
+                  "time_penalty_minutes": 180
+                }
               }
             }
           ]
@@ -66,7 +108,7 @@
       ]
     },
     {
-      "type": "Technical and Mechanical Issues",
+      "type": "Technical",
       "encounters": [
         {
           "name": "Fuel Shortage",
@@ -74,26 +116,47 @@
           "reaction_options": [
             {
               "option": "Divert to nearest airport",
+              "type": "Land",
               "outcome": {
                 "success_chance": 0.9,
-                "success": "You safely land at a nearby airport and refuel, avoiding disaster.",
-                "failure": "Unexpected traffic at the airport delays your landing, and the fuel runs out mid-approach, forcing an emergency landing."
+                "success": {
+                  "description": "You safely land at a nearby airport and refuel, avoiding disaster.",
+                  "time_penalty_minutes": 45
+                },
+                "failure": {
+                  "description": "Unexpected traffic at the airport delays your landing, and the fuel runs out mid-approach, forcing an emergency landing.",
+                  "time_penalty_minutes": 120
+                }
               }
             },
             {
               "option": "Conserve fuel by reducing speed",
+              "type": "Continue",
               "outcome": {
                 "success_chance": 0.7,
-                "success": "You successfully conserve enough fuel to make it to your destination.",
-                "failure": "Despite conserving fuel, you still run out and have to make a forced landing in a nearby field."
+                "success": {
+                  "description": "You successfully conserve enough fuel to make it to your destination.",
+                  "time_penalty_minutes": 30
+                },
+                "failure": {
+                  "description": "Despite conserving fuel, you still run out and have to make a forced landing in a nearby field.",
+                  "time_penalty_minutes": 150
+                }
               }
             },
             {
               "option": "Push through to destination at normal speed",
+              "type": "Continue",
               "outcome": {
                 "success_chance": 0.4,
-                "success": "You barely make it to your destination as the fuel runs out just after landing.",
-                "failure": "You run out of fuel mid-flight and have to make an emergency landing in a remote area."
+                "success": {
+                  "description": "You barely make it to your destination as the fuel runs out just after landing.",
+                  "time_penalty_minutes": 15
+                },
+                "failure": {
+                  "description": "You run out of fuel mid-flight and have to make an emergency landing in a remote area.",
+                  "time_penalty_minutes": 180
+                }
               }
             }
           ]
@@ -104,26 +167,47 @@
           "reaction_options": [
             {
               "option": "Shut down the malfunctioning engine and continue with the other",
+              "type": "Continue",
               "outcome": {
                 "success_chance": 0.8,
-                "success": "You successfully fly with one engine and make it to the nearest airport safely.",
-                "failure": "Flying on one engine causes additional strain, and the second engine fails. You have to perform an emergency landing."
+                "success": {
+                  "description": "You successfully fly with one engine and make it to the nearest airport safely.",
+                  "time_penalty_minutes": 60
+                },
+                "failure": {
+                  "description": "Flying on one engine causes additional strain, and the second engine fails. You have to perform an emergency landing.",
+                  "time_penalty_minutes": 150
+                }
               }
             },
             {
               "option": "Attempt in-flight repair",
+              "type": "Wait",
               "outcome": {
                 "success_chance": 0.5,
-                "success": "The in-flight repair works, and the engine is restored to full functionality.",
-                "failure": "The repair fails, worsening the malfunction and forcing you to shut down the engine."
+                "success": {
+                  "description": "The in-flight repair works, and the engine is restored to full functionality.",
+                  "time_penalty_minutes": 30
+                },
+                "failure": {
+                  "description": "The repair fails, worsening the malfunction and forcing you to shut down the engine.",
+                  "time_penalty_minutes": 120
+                }
               }
             },
             {
               "option": "Land immediately for a full repair",
+              "type": "Land",
               "outcome": {
                 "success_chance": 0.9,
-                "success": "You land safely at the nearest airfield and get the engine repaired, though it takes extra time.",
-                "failure": "N/A"
+                "success": {
+                  "description": "You land safely at the nearest airfield and get the engine repaired, though it takes extra time.",
+                  "time_penalty_minutes": 90
+                },
+                "failure": {
+                  "description": "N/A",
+                  "time_penalty_minutes": 0
+                }
               }
             }
           ]
@@ -131,7 +215,7 @@
       ]
     },
     {
-      "type": "Air Traffic and Logistics",
+      "type": "Traffic",
       "encounters": [
         {
           "name": "Crowded Airspace",
@@ -139,56 +223,47 @@
           "reaction_options": [
             {
               "option": "Wait in a holding pattern",
+              "type": "Wait",
               "outcome": {
                 "success_chance": 1.0,
-                "success": "You safely wait your turn to land, though it causes a delay in your delivery time.",
-                "failure": "N/A"
+                "success": {
+                  "description": "You safely wait your turn to land, though it causes a delay in your delivery time.",
+                  "time_penalty_minutes": 60
+                },
+                "failure": {
+                  "description": "N/A",
+                  "time_penalty_minutes": 0
+                }
               }
             },
             {
               "option": "Request priority landing from air traffic control",
+              "type": "Request",
               "outcome": {
                 "success_chance": 0.6,
-                "success": "Your request is granted, and you make a swift landing, avoiding delays.",
-                "failure": "Air traffic control denies your request, forcing you into a holding pattern anyway."
+                "success": {
+                  "description": "Your request is granted, and you make a swift landing, avoiding delays.",
+                  "time_penalty_minutes": 15
+                },
+                "failure": {
+                  "description": "Air traffic control denies your request, forcing you into a holding pattern anyway.",
+                  "time_penalty_minutes": 90
+                }
               }
             },
             {
               "option": "Divert to a nearby airport",
+              "type": "Land",
               "outcome": {
                 "success_chance": 0.8,
-                "success": "You divert to a nearby, less crowded airport, but you’ll have to make alternate delivery arrangements.",
-                "failure": "The nearby airport is also crowded, causing even further delays."
-              }
-            }
-          ]
-        },
-        {
-          "name": "Delivery Mix-Up",
-          "description": "Mid-flight, you realize that part of your cargo is labeled incorrectly, and the destination is wrong.",
-          "reaction_options": [
-            {
-              "option": "Divert to the correct destination",
-              "outcome": {
-                "success_chance": 0.8,
-                "success": "You divert to the correct destination and successfully deliver the cargo, though it adds extra time.",
-                "failure": "Diverting leads to bad weather, delaying the delivery further and damaging the goods."
-              }
-            },
-            {
-              "option": "Continue to the original destination and sort it out there",
-              "outcome": {
-                "success_chance": 0.7,
-                "success": "You explain the situation at the original destination and get the cargo rerouted, though it costs extra.",
-                "failure": "The client is unhappy with the mistake, leading to a penalty or lost reputation."
-              }
-            },
-            {
-              "option": "Ignore the issue and hope it works out",
-              "outcome": {
-                "success_chance": 0.3,
-                "success": "Against the odds, the recipient accepts the mislabeled cargo without issue.",
-                "failure": "The recipient refuses the cargo, causing a significant delay and reputation damage."
+                "success": {
+                  "description": "You divert to a nearby, less crowded airport, but you’ll have to make alternate delivery arrangements.",
+                  "time_penalty_minutes": 75
+                },
+                "failure": {
+                  "description": "The nearby airport is also crowded, causing even further delays.",
+                  "time_penalty_minutes": 120
+                }
               }
             }
           ]
@@ -197,3 +272,4 @@
     }
   ]
 }
+
