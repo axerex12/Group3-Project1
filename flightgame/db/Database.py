@@ -238,8 +238,8 @@ class Database:
         """
         update the fuel amount
         :param fuel_amount: amount of fuel to be added or subtracted
-        :operator: "+" or "-" to subtract or add
-        :user: screen_name of the user
+        :param operator: "+" or "-" to subtract or add
+        :param user: screen_name of the user
         """
         sql_update_fuel_amount = f"""
                 UPDATE game
@@ -250,3 +250,17 @@ class Database:
             self.cursor.execute(sql_update_fuel_amount)
         else:
             return Exception("Incorrect operator or fuel amount")
+
+    def fetch_data(self, table):
+        """
+        get the current plane user is flying from the database
+        :param table: name of the table
+        :return:
+        """
+        sql_get_plane = f"""
+            SELECT *
+            FROM {table}
+            """
+        self.cursor.execute(sql_get_plane)
+        return self.cursor.fetchall()
+
