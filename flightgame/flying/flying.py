@@ -15,8 +15,8 @@ horribly wip refactoring
 '''
 
 class Flying:
-    def __init__(self) -> None:
-        self.db = Database()
+    def __init__(self, database: Database) -> None:
+        self.db = database
         self.time_minutes = 0
         self.refill_amount = 0
 
