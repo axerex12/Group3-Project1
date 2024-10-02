@@ -33,7 +33,7 @@ class Flying:
             # give random amount of fuel to refill at airports
             fuel_refill_amount = rd.randint(200,1000)
             fuel_refill_list.append(fuel_refill_amount)
-            print(f"Fly to |{airport['airport']}| in |{airport['country']}| distance {airport['distance']:.0f} refill's fuel {fuel_refill_amount} by selecting ({airports_near.index(airport) + 1})")
+            print(f"Fly to and refill fuel ({fuel_refill_amount}) at|{airport['airport']}| in |{airport['country']}| {airport['distance']:.0f} km by selecting ({airports_near.index(airport) + 1})")
 
         running = True
         while running:
@@ -42,6 +42,7 @@ class Flying:
                 if user_input + 1 <= 0:
                     raise Exception("Selection less or equal to zero!")
                 selected_airport = airports_near[user_input]
+                self.refill_amount = fuel_refill_list[user_input]
                 # travel to the selected airport
                 self.fly_to(selected_airport, user)
 
@@ -57,7 +58,7 @@ class Flying:
 
                 # d/v = t calculating time spend flying
                 self.time_minutes +=  selected_airport["distance"] / self.db.get_plane(user)["max_speed"] * 60
-                print(f"\nTime spent flying: {self.time_minutes} minutes\n")
+                print(f"\nTime spent flying: {self.time_minutes:.0f} minutes\n")
                     
                 # fly_to olis varmaan parempi koti tälle
                 self.db.update_fuel_amount(self.calculate_spent_fuel(selected_airport["distance"], user), "-", user)
@@ -94,6 +95,5 @@ class Flying:
 
 if __name__ == "__main__":
     print("Running!")
-    flying = Flying()
     print(flying.get_midpoint((51.5072, 0.1276), (60.1699, 24.9384)))
 
