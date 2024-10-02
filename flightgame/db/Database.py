@@ -179,6 +179,21 @@ class Database:
                                 WHERE game_id={game_id}
                             """)
         return self.cursor.fetchall()
+    
+    def assign_cargo(self, cargo_id, user):
+        """
+        assign_cargo to user by its id
+        :param user: screen_name of an user
+        :return:
+        """
+        sql_assign_cargo = f"""
+            INSERT INTO cargo_list (game_id, cargo_id)
+            VALUES (
+                (SELECT id FROM game WHERE screen_name = "{user}"),
+                (SELECT id FROM cargo WHERE id = {cargo_id})
+            )
+        """
+        self.cursor.execute(sql_assign_cargo)
 
     def get_plane(self, user) -> dict:
         """

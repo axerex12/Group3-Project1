@@ -318,24 +318,6 @@ cargo = [
 
 planes = [
     {
-        "id": 1,
-        "type": "helicopter",
-        "fuel_consumption": 200,
-        "max_speed": 200
-    },
-    {
-        "id": 2,
-        "type": "cargo_plane",
-        "fuel_consumption": 400,
-        "max_speed": 800
-    },
-    {
-        "id": 3,
-        "type": "small_plane",
-        "fuel_consumption": 150,
-        "max_speed": 350
-    },
-    {
         "id": 4,
         "type": "helicopter",
         "fuel_consumption": 180,
@@ -469,13 +451,14 @@ planes = [
     }
 ]
 
-#db.add_data(cargo,"cargo")
-#db.add_data(planes,"plane")
+# db.add_data(cargo,"cargo")
+# db.add_data(planes,"plane")
+db.assign_cargo(5, "heini")
 
 while True:
-    fl.fly_menu(db, distance=500, airport_type="large_airport", user="heini")
+    # fl.fly_menu(db, distance=500, airport_type="large_airport", user="heini")
     # print(db.get_plane("heini"))
     #fl.fly_menu(db, distance=500, airport_type="large_airport", user="heini")
-    pr.renting_menu(db, user="heini")
-    print(db.get_plane("heini"))
+    # pr.renting_menu(db, user="heini")
+    # print(db.get_plane("heini"))
     break
