@@ -90,6 +90,23 @@ class Database:
             );
         """)
 
+    def get_current_airport(self, user):
+        """
+        Hakee nykyisen lentokentän tiedot käyttäjän mukaan.
+
+        :param user: Käyttäjänimi.
+        :return: Nykyisen lentokentän tiedot sanakirjana tai None, jos ei löydy.
+        """
+        sql_fetch_current_airport = f"""
+            SELECT name, ident, latitude_deg, longitude_deg
+            FROM airport
+            INNER JOIN game ON location = ident
+            WHERE screen_name = "{user}"
+        """
+        self.cursor.execute(sql_fetch_current_airport)
+        result = self.cursor.fetchone()
+        return result if result else None
+
     def get_airport(self, icao: str) -> dict:
         """
         Fetch airport from database by icao
