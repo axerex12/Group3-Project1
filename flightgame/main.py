@@ -1,6 +1,10 @@
 from flightgame.db.Database import Database
 import flightgame.flying.flying as fl
+from flightgame.flying.encounters import EncounterClient
 from flightgame.rentaplane.Planerenting import Planerenting
+
+db = Database()
+enc = EncounterClient(db)
 
 db = Database()
 pr = Planerenting()
@@ -157,7 +161,6 @@ cargo = [
         "description": "experimental space tech component"
     }
 ]
-
 
 cargo = [
     {
@@ -468,9 +471,11 @@ planes = [
 
 #db.add_data(cargo,"cargo")
 #db.add_data(planes,"plane")
+
 while True:
+    fl.fly_menu(db, distance=500, airport_type="large_airport", user="heini")
+    # print(db.get_plane("heini"))
     #fl.fly_menu(db, distance=500, airport_type="large_airport", user="heini")
     pr.renting_menu(db, user="heini")
     print(db.get_plane("heini"))
     break
-# db.update_values([{"type": "helicopter", "id": 1}], "plane", "id")

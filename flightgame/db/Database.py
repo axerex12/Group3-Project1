@@ -69,8 +69,7 @@ class Database:
             ALTER TABLE game 
                 ADD COLUMN IF NOT EXISTS (currency INT(32),
                 rented_plane INT(8),
-                fuel_amount INT(8),
-                current_day INT(32),
+                fuel_amount int (8),
                 FOREIGN KEY (rented_plane) REFERENCES plane(id))
         """)
         cursor.execute("""
@@ -200,10 +199,6 @@ class Database:
         self.cursor.execute(sql_get_plane)
         return self.cursor.fetchall()[0]
 
-    def get_random_plane(self, amount: int) -> list:
-        self.cursor.execute(f"SELECT * FROM plane ORDER BY RAND() LIMIT {amount}")
-        return self.cursor.fetchall()
-
     def add_data(self, data: list, table: str):
         """
         Add data to a table, the data needs to be in the same format
@@ -237,19 +232,7 @@ class Database:
             # Prepare the SQL update query
             sql = f"UPDATE {table} SET {', '.join(columns)} WHERE {id_column} = %s"
             values.append(id_value)
-            print(id_value)
             self.cursor.execute(sql, values)
-
-    def set_plane(self, user, plane_id, price):
-        """
-        get the current plane user is flying from the database
-        :param user: screen_name of an user
-        :param plane_id: id of the plane in planes table
-        :return:
-        """
-        sql_set_plane = f"UPDATE game SET rented_plane = {plane_id}, currency = currency-{price} WHERE screen_name = '{user}'"
-
-        self.cursor.execute(sql_set_plane)
     
     def update_fuel_amount(self, fuel_amount, operator, user):
         """
@@ -267,3 +250,5 @@ class Database:
             self.cursor.execute(sql_update_fuel_amount)
         else:
             return Exception("Incorrect operator or fuel amount")
+        return self.cursor.fetchall()
+
