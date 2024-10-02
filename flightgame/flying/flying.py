@@ -68,15 +68,15 @@ class Flying:
         self.db.update_data( [{"location": airport["ident"], "screen_name": user}], "game", "screen_name")
 
 
-    def get_midpoint(self, origin: tuple, destination: tuple) -> tuple:
+    def get_midpoint(self, origin: tuple, destination: tuple) -> tuple[float, float]:
         """
         returns midpoint of twoo coordinates
         :param origin: origin point
         :param destinatio: destination point
         :return:
         """
-        x = (origin[0] + destination[0]) / 2
-        y = (origin[1] + destination[1]) / 2
+        x: float = (origin[0] + destination[0]) / 2
+        y: float = (origin[1] + destination[1]) / 2
         print("midpoint")
         return (x, y)
 
@@ -85,8 +85,8 @@ class Flying:
         # return used fuel based on L/100km
         return int(plane["fuel_consumption"] * distance / 100)
 
-
 if __name__ == "__main__":
     print("Running!")
     flying = Flying()
     print(flying.get_midpoint((51.5072, 0.1276), (60.1699, 24.9384)))
+
