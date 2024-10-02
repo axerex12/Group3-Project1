@@ -85,6 +85,7 @@ class EncounterClient:
 	def random_encounter(self) -> Encounter:
 		return self.encounters_list[random.randint(0,len(self.encounters_list)-1)]
 
-db = Database()
-encClient = EncounterClient(db)
-print(encClient.random_encounter().start_encounter())
+if __name__ == "__main__":
+	db = Database()
+	encClient = EncounterClient(db)
+	print(encClient.random_encounter().start_encounter())
