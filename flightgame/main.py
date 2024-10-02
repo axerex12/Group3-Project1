@@ -470,6 +470,7 @@ planes = [
 #db.add_data(planes,"plane")
 while True:
     #fl.fly_menu(db, distance=500, airport_type="large_airport", user="heini")
-    pr.renting_menu(db)
-    # print(db.get_plane("heini"))
+    pr.renting_menu(db, user="heini")
+    print(db.get_plane("heini"))
+    break
 # db.update_values([{"type": "helicopter", "id": 1}], "plane", "id")
