@@ -18,7 +18,7 @@ class Planerenting:
             f"Vehicle type: {random_plane['type']}\nFuel consumption: {random_plane['fuel_consumption']}\nMax speed: {random_plane['max_speed']}\nRenting Price weekly: {random_plane['price']}\nID: {order_id}"
             f"\n#|---|---|---|---|---|#")
 
-    def renting_menu(self, db: Database):
+    def renting_menu(self, db: Database, user):
         print("Welcome to plane-to-succeed rental! Here's our current selection:")
         max_planes = 3
         planes = self.plane_chooser(db, max_planes)
@@ -33,9 +33,10 @@ class Planerenting:
                 print("Not an integer! Try again!")
                 continue
             else:
-                if (userInput <= 0) and (userInput > max_planes):
+                if (userInput <= 0) or (userInput > max_planes):
                     print("Not a valid index! Try again!")
                     continue
                 else:
-                    print(planes[userInput - 1])  # Just shows what was chosen for now
+                    planes[userInput-1]['price'] = 0
+                    db.set_plane(user,planes[userInput-1]['id'],planes[userInput-1]['price'])
                     break
