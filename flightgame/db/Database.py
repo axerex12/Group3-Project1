@@ -16,6 +16,7 @@ class Database:
             username=database["username"],
             password=database["password"],
             autocommit=True,
+            buffered=True,
         )
         self.cursor = self.connection.cursor(dictionary=True)
         self.validate_database()
@@ -117,19 +118,12 @@ class Database:
         :param user: screen_name of an user
         :return:
         """
-        sql_fetch_current_airport = f"""
-            select name, ident, latitude_deg, longitude_deg
-            from airport
-            inner join game on location = ident
-            where screen_name = "{user}"
-        """
 
-        self.cursor.execute(sql_fetch_current_airport)
-        current_airport = self.cursor.fetchall()[0]
+        current_airport = self.get_current_airport(user)
 
         # some sql voodoo to get all airports in a radius
         sql_get_airports_in_distance = f"""
-            SELECT country.name as country, airport.name as airport, ident,
+            SELECT country.name as country, airport.name as airport, ident, latitude_deg, longitude_deg,
                 (6371 * acos(
                         cos(radians({current_airport["latitude_deg"]})) * cos(radians(latitude_deg)) *
                         cos(radians(longitude_deg) - radians({current_airport["longitude_deg"]})) +
@@ -146,8 +140,23 @@ class Database:
         self.cursor.execute(sql_get_airports_in_distance)
         return self.cursor.fetchall()
 
-    def get_airport_by_coords(self,lat, lon):
-        self.cursor.execute(f"SELECT * FROM airport WHERE lat='{lat},lon={lon}'")
+    def get_current_airport(self, user: str) -> dict:
+        sql_fetch_current_airport = f"""
+                    select name, ident, latitude_deg, longitude_deg
+                    from airport
+                    inner join game on location = ident
+                    where screen_name = "{user}"
+                """
+        self.cursor.execute(sql_fetch_current_airport)
+        return self.cursor.fetchone()
+
+    def get_airport_by_coords(self, lat, lon):
+        sql = f"""
+            SELECT * FROM airport 
+            WHERE ROUND(latitude_deg) = {round(lat)} 
+            AND ROUND(longitude_deg) = {round(lon)}
+        """
+        self.cursor.execute(sql)
         return self.cursor.fetchone()
 
     def get_cargo(self, cargo_id: int) -> dict:
@@ -235,5 +244,9 @@ class Database:
             self.cursor.execute(sql_update_fuel_amount)
         else:
             return Exception("Incorrect operator or fuel amount")
-        return self.cursor.fetchall()
+        return "fuel updated"
+
+    def add_time(self, amount_min, user):
+        sql = f"UPDATE game SET current_day=current_day+{amount_min/3600} WHERE screen_name='{user}'"
+        self.cursor.execute(sql)
 

@@ -1,3 +1,5 @@
+from tracemalloc import Traceback
+
 from flightgame.db.Database import Database
 from flightgame.flying import encounters
 import random as rd
@@ -35,18 +37,25 @@ class Flying:
 
         running = True
         while running:
-            try:
+            #try:
                 user_input = int(input("Selection: ")) - 1
                 if user_input + 1 <= 0:
                     raise Exception("Selection less or equal to zero!")
-                selected_airport = airports_near[user_input]
-                # travel to the selected airport
-                self.fly_to(self.db, selected_airport, user)
+                airport = selected_airport = airports_near[user_input]
+                print(f"\nFlying to |{selected_airport['ident']}| |{selected_airport['airport']}| in |{selected_airport['country']}\n")
 
                 # encounter tähän väliin tai fly_to mukaan
                 if rd.randint(0, 6) == 6:
                     print("ENCOUNTER")
-
+                    player_airport = self.db.get_current_airport(user)
+                    start_coords = (player_airport["latitude_deg"], player_airport["longitude_deg"])
+                    print(start_coords)
+                    end_coords = (selected_airport["latitude_deg"], selected_airport["longitude_deg"])
+                    print(end_coords)
+                    enc = self.encounter_client.random_encounter().start_encounter()
+                    midpoint = self.get_midpoint(start_coords, end_coords)
+                    airport = self.db.get_airport_by_coords(midpoint[0],midpoint[1])
+                    self.handle_encounter(enc, midpoint, user)
 
                 # id INT(8),
                 # type VARCHAR(40),
@@ -58,18 +67,21 @@ class Flying:
                     
                 # fly_to olis varmaan parempi koti tälle
                 # update spent fuel // currently it just puts the amount of spend fuel as fuel_amount
-                self.db.update_fuel_amount(self.calculate_spent_fuel(selected_airport["distance"], user), "-", user)
-            except Exception as exc:
-                print(exc)
-                continue
-            running = False
+                # travel to the selected airport
+                #self.fly_to(selected_airport, user)
+                self.db.update_data([{"location": airport["ident"], "screen_name": user}], "game", "screen_name")
 
+                self.db.update_fuel_amount(self.calculate_spent_fuel(selected_airport["distance"], user), "-", user)
+            #except Exception as e:
+            #    print(e)
+            #    continue
 
     def fly_to(self, airport: dict, user: str):
-        # need to make some kind of class to keep track of what user we are on
-        print(f"\nFlying to |{airport['ident']}| |{ airport['airport']}| in |{airport['country']}\n")
-        self.db.update_data( [{"location": airport["ident"], "screen_name": user}], "game", "screen_name")
 
+        # need to make some kind of class to keep track of what user we are on
+        print(f"\nFlying to |{airport['ident']}| |{airport['airport']}| in |{airport['country']}\n")
+
+        self.db.update_data( [{"location": airport["ident"], "screen_name": user}], "game", "screen_name")
 
     def get_midpoint(self, origin: tuple, destination: tuple) -> tuple:
         """
@@ -88,12 +100,26 @@ class Flying:
         # return used fuel based on L/100km
         return int(plane["fuel_consumption"] * distance / 100)
 
-    def handle_encounter(self, enc_data: tuple, coords: tuple):
+    def handle_encounter(self, enc_data: tuple, coords: tuple,user):
         success = enc_data[0]
         time_added = enc_data[1]
         action = enc_data[2]
-        print(enc_data)
-        self.db.get_airport_by_coords(coords[0],coords[1])
+        if success:
+            print(enc_data)
+            print(coords)
+            if action== "Land":
+                airport = self.db.get_airport_by_coords(coords[0], coords[1])
+                print(f"Landed in {airport['name']} in {airport['iso_country']}")
+                self.time_minutes += time_added
+                #TODO: update db to accept floats in current_day
+                self.db.add_time(time_added, user)
+            elif action=="Wait":
+                print(f"You wait for {time_added} min")
+                self.time_minutes += time_added
+            elif action=="Continue":
+                print("You continue as normal and everything goes well")
+        else:
+            print("HAH! You died")
 
 if __name__ == "__main__":
     print("Running!")
