@@ -253,7 +253,7 @@ class Database:
 
     def fetch_data(self, table):
         """
-        get the current plane user is flying from the database
+        get the whole table from the database
         :param table: name of the table
         :return:
         """
@@ -264,3 +264,19 @@ class Database:
         self.cursor.execute(sql_get_plane)
         return self.cursor.fetchall()
 
+    def fetch_data_row(self, table, column, operator, data):
+        """
+        get the specific row from a table from the database
+        :param table: name of the table
+        :param column: the specific column
+        :param operator: using default SQL operators
+        :param data: data being looked for in the column
+        :return:
+        """
+        sql_get_plane = f"""
+            SELECT *
+            FROM {table}
+            WHERE {column} {operator} {data}
+            """
+        self.cursor.execute(sql_get_plane)
+        return self.cursor.fetchall()
