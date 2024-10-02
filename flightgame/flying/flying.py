@@ -21,7 +21,6 @@ class Flying:
 
     def fly_menu(self, airport_type, distance, user):
         # encounter = encounters.Encounter()
-        time_minutes = 0
 
         airports_near = self.db.get_airports_by_distance(
             airport_type, distance, user)
@@ -52,7 +51,7 @@ class Flying:
                 # max_speed INT(16),
                 # PRIMARY KEY (id)
 
-                time += self.db.get_plane(user)["max_speed"] * selected_airport["distance"]
+                self.time_minutes += self.db.get_plane(user)["max_speed"] * selected_airport["distance"]
                     
                 # fly_to olis varmaan parempi koti tälle
                 # update spent fuel // currently it just puts the amount of spend fuel as fuel_amount
