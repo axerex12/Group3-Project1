@@ -1,6 +1,3 @@
-from tkinter.font import names
-
-
 class Encounter:
 	def __init__(self, name: str, enc_type: str):
 		self.name = name
@@ -37,5 +34,6 @@ class ExtremeWeather(Encounter):
 
 		return True
 
-thunder_storm = ExtremeWeather("Thunder Storm")
-thunder_storm.start_encounter()
+if __name__ == "__main__":
+	thunder_storm = ExtremeWeather("Thunder Storm")
+	thunder_storm.start_encounter()

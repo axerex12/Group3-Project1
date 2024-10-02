@@ -1,5 +1,6 @@
 from flightgame.db.Database import Database
-
+from flightgame.flying import encounters
+import random as rd
 
 '''
 get a list of airports that are close
@@ -15,6 +16,8 @@ horribly wip refactoring
 
 
 def fly_menu(db: Database, airport_type, distance, user):
+    # encounter = encounters.Encounter()
+
     airports_near = db.get_airports_by_distance(
         airport_type, distance, user)
 
@@ -29,10 +32,17 @@ def fly_menu(db: Database, airport_type, distance, user):
             user_input = int(input("Selection: ")) - 1
             if user_input + 1 <= 0:
                 raise Exception("Selection less or equal to zero!")
-            fly_to(db, airports_near[user_input], user)
+            selected_airport = airports_near[user_input]
+            # travel to the selected airport
+            fly_to(db, selected_airport, user)
+
+            # encounter tähän väliin tai fly_to mukaan
+            if rd.randint(0, 6) == 6:
+                print("ENCOUNTER")
+                
+            # fly_to olis varmaan parempi koti tälle
             # update spent fuel // currently it just puts the amount of spend fuel as fuel_amount
-            # db.update_data([{"fuel_amount": calculate_spent_fuel(db, airports_near[user_input]["distance"], user), "screen_name": user}], "game", "screen_name")
-            db.update_fuel_amount(calculate_spent_fuel(db, airports_near[user_input]["distance"], user), "-", user)
+            db.update_fuel_amount(calculate_spent_fuel(db, selected_airport["distance"], user), "-", user)
         except Exception as exc:
             print(exc)
             continue
@@ -45,12 +55,26 @@ def fly_to(db: Database, airport: dict, user: str):
     db.update_data( [{"location": airport["ident"], "screen_name": user}], "game", "screen_name")
 
 
+def get_midpoint(db: Database, origin: tuple, destination: tuple) -> tuple:
+    """
+    returns midpoint of twoo coordinates
+    :param origin: origin point
+    :param destinatio: destination point
+    :return:
+    """
+    x = (origin[0] + destination[0]) / 2
+    y = (origin[1] + destination[1]) / 2
+    print("midpoint")
+    return (x, y)
+
+
 def calculate_spent_fuel(db: Database, distance, user) -> int:
     plane: dict = db.get_plane(user)
     # return used fuel based on L/100km
-    print(plane)
     return int(plane["fuel_consumption"] * distance / 100)
 
 
 if __name__ == "__main__":
     print("Running!")
+    db = Database()
+    print(get_midpoint(db, (51.5072, 0.1276), (60.1699, 24.9384)))
