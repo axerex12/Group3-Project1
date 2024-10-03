@@ -92,3 +92,4 @@ def contract_destination(chosen_contract, user):
 
 user = "heini"
 chosen_contract = contract_generator(user)
+contract_destination(chosen_contract, user)
