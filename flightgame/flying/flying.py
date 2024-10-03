@@ -20,10 +20,11 @@ horribly wip refactoring
 '''
 
 class Flying:
-    def __init__(self) -> None:
-        self.db = Database()
+    def __init__(self, database: Database) -> None:
+        self.db = database
         self.time_minutes = 0
         self.encounter_client = EncounterClient()
+        self.refill_amount = 0
 
     def fly_menu(self, airport_type, distance, user):
         # encounter = encounters.Encounter()
@@ -36,7 +37,10 @@ class Flying:
             # list all nearby airports, make the user use numbers from 1
             # while selecting the airport since that is more natural
             for airport in airports_near:
-                print(f"Fly to |{airport['airport']}| in |{airport['country']}| distance(you) {airport['distance']:.0f} by selecting ({airports_near.index(airport) + 1})")
+            # give random amount of fuel to refill at airports
+                fuel_refill_amount = rd.randint(200,1000)
+                fuel_refill_list.append(fuel_refill_amount)
+                print(f"Fly to and refill fuel ({fuel_refill_amount}) at|{airport['airport']}| in |{airport['country']}| {airport['distance']:.0f} km by selecting ({airports_near.index(airport) + 1})")
 
             try:
                 user_input = int(input("Selection: ")) - 1
@@ -44,6 +48,10 @@ class Flying:
                     raise Exception("Selection less or equal to zero!")
                 airport = selected_airport = airports_near[user_input]
                 print(f"\nFlying to |{selected_airport['ident']}| |{selected_airport['airport']}| in |{selected_airport['country']}\n")
+                selected_airport = airports_near[user_input]
+                self.refill_amount = fuel_refill_list[user_input]
+                # travel to the selected airport
+                self.fly_to(selected_airport, user)
 
                 # encounter tähän väliin tai fly_to mukaan
                 if rd.randint(0, 6) == 6:
@@ -58,6 +66,7 @@ class Flying:
                     airport = self.db.get_airport_by_coords(midpoint[0],midpoint[1])
                     if not self.handle_encounter(enc, midpoint, user):
                         break
+
                 # id INT(8),
                 # type VARCHAR(40),
                 # fuel_consumption INT(32),
@@ -76,7 +85,8 @@ class Flying:
             except Exception as e:
                 traceback.print_exc()
                 #continue
-        print("Ended flying")
+            print("Ended flying")
+            running = False
 
     def fly_to(self, airport: dict, user: str):
 
@@ -85,7 +95,7 @@ class Flying:
 
         self.db.update_data( [{"location": airport["ident"], "screen_name": user}], "game", "screen_name")
 
-    def get_midpoint(self, origin: tuple, destination: tuple) -> tuple:
+    def get_midpoint(self, origin: tuple, destination: tuple) -> tuple[float, float]:
         """
         returns midpoint of twoo coordinates
         :param self:
@@ -93,9 +103,9 @@ class Flying:
         :param destination: destination point
         :return:
         """
-        x = (origin[0] + destination[0]) / 2
-        y = (origin[1] + destination[1]) / 2
-        #print("midpoint")
+        x: float = (origin[0] + destination[0]) / 2
+        y: float = (origin[1] + destination[1]) / 2
+        print("midpoint")
         return (x, y)
 
     def calculate_spent_fuel(self, distance, user) -> int:
@@ -143,5 +153,5 @@ class Flying:
 
 if __name__ == "__main__":
     print("Running!")
-    flying = Flying()
     print(flying.get_midpoint((51.5072, 0.1276), (60.1699, 24.9384)))
+

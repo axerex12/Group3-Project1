@@ -68,7 +68,8 @@ class Database:
             ALTER TABLE game 
                 ADD COLUMN IF NOT EXISTS (currency INT(32),
                 rented_plane INT(8),
-                fuel_amount int (8),
+                fuel_amount INT (8),
+                current_day INT (8),
                 FOREIGN KEY (rented_plane) REFERENCES plane(id))
         """)
         cursor.execute("""
@@ -87,6 +88,23 @@ class Database:
                 PRIMARY KEY (game_id, cargo_id)
             );
         """)
+
+    def get_current_airport(self, user):
+        """
+        Hakee nykyisen lentokentän tiedot käyttäjän mukaan.
+
+        :param user: Käyttäjänimi.
+        :return: Nykyisen lentokentän tiedot sanakirjana tai None, jos ei löydy.
+        """
+        sql_fetch_current_airport = f"""
+            SELECT name, ident, latitude_deg, longitude_deg
+            FROM airport
+            INNER JOIN game ON location = ident
+            WHERE screen_name = "{user}"
+        """
+        self.cursor.execute(sql_fetch_current_airport)
+        result = self.cursor.fetchone()
+        return result if result else None
 
     def get_airport(self, icao: str) -> dict:
         """
@@ -186,6 +204,21 @@ class Database:
                                 WHERE game_id={game_id}
                             """)
         return self.cursor.fetchall()
+    
+    def assign_cargo(self, cargo_id, user):
+        """
+        assign_cargo to user by its id
+        :param user: screen_name of an user
+        :return:
+        """
+        sql_assign_cargo = f"""
+            INSERT INTO cargo_list (game_id, cargo_id)
+            VALUES (
+                (SELECT id FROM game WHERE screen_name = "{user}"),
+                (SELECT id FROM cargo WHERE id = {cargo_id})
+            )
+        """
+        self.cursor.execute(sql_assign_cargo)
 
     def get_plane(self, user) -> dict:
         """

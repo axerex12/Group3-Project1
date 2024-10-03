@@ -1,7 +1,13 @@
 from flightgame.db.Database import Database
+from flightgame.flying.flying import Flying
 from flightgame.flying.encounters import EncounterClient
 from flightgame.flying.flying import Flying
 from flightgame.rentaplane.Planerenting import Planerenting
+from flightgame.data import Data
+
+db = Database()
+enc = EncounterClient(db)
+flying = Flying(db)
 
 db = Database()
 pr = Planerenting()
@@ -322,3 +328,7 @@ while True:
     #pr.renting_menu(db, user="heini")
     print(db.get_plane("heini"))
     break
+# Data used here
+# db.add_data(Data.cargo,"cargo")
+# db.add_data(Data.planes,"plane")
+# db.assign_cargo(5, "heini")
