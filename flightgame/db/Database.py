@@ -1,5 +1,3 @@
-from os.path import curdir
-
 import mysql.connector
 import json
 import os
@@ -18,6 +16,7 @@ class Database:
             username=database["username"],
             password=database["password"],
             autocommit=True,
+            buffered=True,
         )
         self.cursor = self.connection.cursor(dictionary=True)
         self.validate_database()
@@ -129,7 +128,7 @@ class Database:
         self.cursor.execute(f"SELECT * FROM airport WHERE iso_country='{iso}'")
         return self.cursor.fetchall()
 
-    def get_airports_by_distance(self, airport_type: str, distance: int, user: str) -> list:
+    def get_airports_by_distance(self, airport_type: str, distance: int, user: str, limit: int) -> list:
         """
         get all airports from the database that are inside certain radius from user's current loc
         :param airport_type: limit what size of airports we are interested in
@@ -137,19 +136,12 @@ class Database:
         :param user: screen_name of an user
         :return:
         """
-        sql_fetch_current_airport = f"""
-            select name, ident, latitude_deg, longitude_deg
-            from airport
-            inner join game on location = ident
-            where screen_name = "{user}"
-        """
 
-        self.cursor.execute(sql_fetch_current_airport)
-        current_airport = self.cursor.fetchall()[0]
+        current_airport = self.get_current_airport(user)
 
         # some sql voodoo to get all airports in a radius
         sql_get_airports_in_distance = f"""
-            SELECT country.name as country, airport.name as airport, ident,
+            SELECT country.name as country, airport.name as airport, ident, latitude_deg, longitude_deg,
                 (6371 * acos(
                         cos(radians({current_airport["latitude_deg"]})) * cos(radians(latitude_deg)) *
                         cos(radians(longitude_deg) - radians({current_airport["longitude_deg"]})) +
@@ -160,11 +152,43 @@ class Database:
             inner join country on country.iso_country = airport.iso_country
             WHERE airport.type = "{airport_type}"
             HAVING distance <= {distance} AND distance > 1
-            ORDER BY distance;
+            ORDER BY distance
+            LIMIT {limit};
         """
 
         self.cursor.execute(sql_get_airports_in_distance)
         return self.cursor.fetchall()
+
+    def get_current_airport(self, user: str) -> dict:
+        sql_fetch_current_airport = f"""
+                    select name, ident, latitude_deg, longitude_deg
+                    from airport
+                    inner join game on location = ident
+                    where screen_name = "{user}"
+                """
+        self.cursor.execute(sql_fetch_current_airport)
+        return self.cursor.fetchone()
+
+    def get_airport_by_coords(self, lat, lon, tolerance=1):
+        """
+        Get an airport by coordinates within a certain tolerance.
+
+        :param lat: Latitude
+        :param lon: Longitude
+        :param tolerance: Degree of tolerance for latitude/longitude comparison (default 1)
+        :return: The matching airport record or None
+        """
+        sql = f"""
+            SELECT * FROM airport 
+            WHERE (latitude_deg BETWEEN {lat - tolerance} AND {lat + tolerance})
+            AND (longitude_deg BETWEEN {lon - tolerance} AND {lon + tolerance})
+        """
+        self.cursor.execute(sql)
+        result = self.cursor.fetchone()
+
+        if result is None:
+            print(f"No airport found near coordinates ({lat}, {lon})")
+        return result
 
     def get_cargo(self, cargo_id: int) -> dict:
         self.cursor.execute(f"SELECT * FROM cargo WHERE id={cargo_id}")
@@ -266,5 +290,9 @@ class Database:
             self.cursor.execute(sql_update_fuel_amount)
         else:
             return Exception("Incorrect operator or fuel amount")
-        return self.cursor.fetchall()
+        return "fuel updated"
+
+    def add_time(self, amount_min, user):
+        sql = f"UPDATE game SET current_day=current_day+{amount_min/3600} WHERE screen_name='{user}'"
+        self.cursor.execute(sql)
 
