@@ -70,6 +70,7 @@ class Database:
                 ADD COLUMN IF NOT EXISTS (currency INT(32),
                 rented_plane INT(8),
                 fuel_amount int (8),
+                current_day int (8),
                 FOREIGN KEY (rented_plane) REFERENCES plane(id))
         """)
         cursor.execute("""
