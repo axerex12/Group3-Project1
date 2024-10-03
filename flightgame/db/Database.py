@@ -1,3 +1,5 @@
+from locale import currency
+
 import mysql.connector
 import json
 import os
@@ -296,3 +298,14 @@ class Database:
         sql = f"UPDATE game SET current_day=current_day+{amount_min/3600} WHERE screen_name='{user}'"
         self.cursor.execute(sql)
 
+
+    def update_currency_amount(self, currency, operator, user):
+        """
+        update the currency amount
+        """
+        sql_update_currency_amount = f"""
+                UPDATE game
+                SET currency = currency {operator} {currency}
+                WHERE screen_name = "{user}"
+            """
+        self.cursor.execute(sql_update_currency_amount)
