@@ -194,6 +194,23 @@ class Database:
             )
         """
         self.cursor.execute(sql_assign_cargo)
+    
+    def remove_cargo(self, user) -> int:
+        """
+        remove ALL cargo from user by screen_name
+        :param user: screen_name of an user
+        :return:
+        """
+        sql_remove_cargo = f"""
+            delete from cargo_list
+            where game_id = (
+                select id
+                from game
+                where screen_name = "%s"
+                LIMIT = 1
+            )
+        """
+        self.cursor.execute(sql_remove_cargo, user)
 
     def get_plane(self, user) -> dict:
         """
