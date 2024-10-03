@@ -36,6 +36,8 @@ class Flying:
 
             # list all nearby airports, make the user use numbers from 1
             # while selecting the airport since that is more natural
+            fuel_refill_list = []
+
             for airport in airports_near:
             # give random amount of fuel to refill at airports
                 fuel_refill_amount = rd.randint(200,1000)
@@ -51,7 +53,7 @@ class Flying:
                 selected_airport = airports_near[user_input]
                 self.refill_amount = fuel_refill_list[user_input]
                 # travel to the selected airport
-                self.fly_to(selected_airport, user)
+                #self.fly_to(selected_airport, user)
 
                 # encounter tähän väliin tai fly_to mukaan
                 if rd.randint(0, 6) == 6:
@@ -85,13 +87,13 @@ class Flying:
             except Exception as e:
                 traceback.print_exc()
                 #continue
-            print("Ended flying")
-            running = False
+        print("Ended flying")
+        running = False
 
     def fly_to(self, airport: dict, user: str):
 
         # need to make some kind of class to keep track of what user we are on
-        print(f"\nFlying to |{airport['ident']}| |{airport['airport']}| in |{airport['country']}\n")
+        #print(f"\nFlying to |{airport['ident']}| |{airport['airport']}| in |{airport['country']}\n")
 
         self.db.update_data( [{"location": airport["ident"], "screen_name": user}], "game", "screen_name")
 
@@ -153,5 +155,5 @@ class Flying:
 
 if __name__ == "__main__":
     print("Running!")
-    print(flying.get_midpoint((51.5072, 0.1276), (60.1699, 24.9384)))
+    #print(flying.get_midpoint((51.5072, 0.1276), (60.1699, 24.9384)))
 
