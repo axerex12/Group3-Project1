@@ -110,7 +110,7 @@ class Database:
         self.cursor.execute(f"SELECT * FROM airport WHERE iso_country='{iso}'")
         return self.cursor.fetchall()
 
-    def get_airports_by_distance(self, airport_type: str, distance: int, user: str) -> list:
+    def get_airports_by_distance(self, airport_type: str, distance: int, user: str, limit: int) -> list:
         """
         get all airports from the database that are inside certain radius from user's current loc
         :param airport_type: limit what size of airports we are interested in
@@ -134,7 +134,8 @@ class Database:
             inner join country on country.iso_country = airport.iso_country
             WHERE airport.type = "{airport_type}"
             HAVING distance <= {distance} AND distance > 1
-            ORDER BY distance;
+            ORDER BY distance
+            LIMIT {limit};
         """
 
         self.cursor.execute(sql_get_airports_in_distance)
@@ -150,14 +151,26 @@ class Database:
         self.cursor.execute(sql_fetch_current_airport)
         return self.cursor.fetchone()
 
-    def get_airport_by_coords(self, lat, lon):
+    def get_airport_by_coords(self, lat, lon, tolerance=1):
+        """
+        Get an airport by coordinates within a certain tolerance.
+
+        :param lat: Latitude
+        :param lon: Longitude
+        :param tolerance: Degree of tolerance for latitude/longitude comparison (default 1)
+        :return: The matching airport record or None
+        """
         sql = f"""
             SELECT * FROM airport 
-            WHERE ROUND(latitude_deg) = {round(lat)} 
-            AND ROUND(longitude_deg) = {round(lon)}
+            WHERE (latitude_deg BETWEEN {lat - tolerance} AND {lat + tolerance})
+            AND (longitude_deg BETWEEN {lon - tolerance} AND {lon + tolerance})
         """
         self.cursor.execute(sql)
-        return self.cursor.fetchone()
+        result = self.cursor.fetchone()
+
+        if result is None:
+            print(f"No airport found near coordinates ({lat}, {lon})")
+        return result
 
     def get_cargo(self, cargo_id: int) -> dict:
         self.cursor.execute(f"SELECT * FROM cargo WHERE id={cargo_id}")

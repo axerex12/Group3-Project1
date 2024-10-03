@@ -1,7 +1,6 @@
 import json
 import random
 import os
-
 from flightgame.db.Database import Database
 
 class Encounter:
@@ -27,10 +26,15 @@ class Encounter:
 		print("Choose your action ")
 		opt = 0
 		for i in self.reaction_options:
-			print(f"{opt}. {i['option']}")
+			print(f"{opt}. {i['option']}, {i['outcome']['success_chance']}")
 			opt+=1
 		while True:
-			option = int(input("> "))
+			option = -1
+			try:
+				option = int(input("> "))
+			except Exception as e:
+				print("please enter valid input")
+				continue
 
 			if int(option) < len(self.reaction_options):
 				encounter = self.reaction_options[option]
@@ -46,8 +50,8 @@ class Encounter:
 					print(f"Type is: {encounter_type}")
 
 				success = random.uniform(0.0,1.0)
-				print(encounter_success)
-				print(encounter["outcome"]["success_chance"])
+				#print(encounter_success)
+				#print(encounter["outcome"]["success_chance"])
 				encounter_success = success<encounter["outcome"]["success_chance"]
 				if encounter_success:
 					time_add = encounter["outcome"]["success"]["time_penalty_minutes"]
@@ -71,7 +75,7 @@ class EncounterClient:
 	def load_encounters(self, encounters: list) -> list:
 		encounters_list = []
 		for enc_t in encounters:
-			print(enc_t["type"])
+			#print(enc_t["type"])
 			for enc in enc_t["encounters"]:
 				#print(enc["name"])
 				#print(enc_t["type"])
