@@ -266,7 +266,7 @@ class Database:
             values.append(id_value)
             self.cursor.execute(sql, values)
     
-    def update_fuel_amount(self, fuel_amount, operator, user):
+    def update_fuel_amount(self, fuel_amount, operator, user) -> None:
         """
         update the fuel amount
         :param fuel_amount: amount of fuel to be added or subtracted
@@ -281,6 +281,5 @@ class Database:
         if fuel_amount > 0 and (operator == "+" or operator == "-"):
             self.cursor.execute(sql_update_fuel_amount)
         else:
-            return Exception("Incorrect operator or fuel amount")
-        return self.cursor.fetchall()
+            print("Incorrect fuel amount of operator")
 
