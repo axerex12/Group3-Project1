@@ -3,21 +3,13 @@ from geopy import distance
 
 db = Database()
 
-
 def calculate_distance(icao1: str, icao2: str) -> float:
-    """
-    Laskee etäisyyden lentokenttien välillä ICAO-koodin avulla
-    käyttäen lentokenttien longitude ja latitude käyttäen geopy.distance.
-
-    :param icao1: Ensimmäisen lentokentän ICAO-koodi.
-    :param icao2: Toisen lentokentän ICAO-koodi.
-    :return: Etäisyys kilometreinä.
-    """
+    """laskee lentokenttien etäysyydet."""
     airport1 = db.get_airport(icao1)
     airport2 = db.get_airport(icao2)
 
     if airport1 is None or airport2 is None:
-        raise ValueError("Yhtä tai molempia lentokenttiä ei löytynyt.")
+        raise ValueError("One or both airports could not be found.")
 
     ap1_cords = (airport1['latitude_deg'], airport1['longitude_deg'])
     ap2_cords = (airport2['latitude_deg'], airport2['longitude_deg'])
@@ -25,9 +17,8 @@ def calculate_distance(icao1: str, icao2: str) -> float:
     dist = distance.distance(ap1_cords, ap2_cords).kilometers
     return dist
 
-
 def print_contract(contract):
-    """Tulostaa sopimuksen tiedot."""
+    """printtaa contractien tiedot."""
     print(f"Lentokenttä: {contract['airport_name']}")
     print(f"Cargon kuvaus: {contract['cargo_description']}")
     print(f"Cargon arvo: {contract['cargo_value']}€")
@@ -35,16 +26,19 @@ def print_contract(contract):
     print(f"Palkkio: {contract['palkkio']}€")
     print(f"Etäisyys nykyisestä lentokentästä: {contract['distance']:.2f} km")
 
-
-def contract_generator() -> dict:
-    """Generoi 3 satunnaista kontraktia, joista pelaaja voi valita yhden."""
+def contract_generator(user) -> dict:
+    """Generoi 3 contractia pelaajalle ja antaa niistä infoa."""
     contracts = []
-    current_airport = db.get_current_airport("heini")
+    current_airport = db.get_current_airport(user)
+
+    if not current_airport:
+        print("Error: Unable to retrieve current airport for the user.")
+        return None
 
     for _ in range(3):
         airport = db.get_random_airport(1)[0]
         cargo = db.get_random_cargo(1)[0]
-        palkkio = 0.2 * cargo['delivery_value']  # Palkkio on 20% cargon arvosta
+        palkkio = 0.2 * cargo['delivery_value']  # Reward is 20% of cargo value
         distance_to_airport = calculate_distance(current_airport['ident'], airport['ident'])
 
         contract = {
@@ -59,7 +53,8 @@ def contract_generator() -> dict:
         }
         contracts.append(contract)
 
-    # Tulostetaan sopimukset
+    # Print contracts
+    print("\nAvailable Contracts:")
     for idx, contract in enumerate(contracts, start=1):
         print(f"\nKontrakti {idx}:")
         print_contract(contract)
@@ -69,9 +64,8 @@ def contract_generator() -> dict:
     print_contract(selected_contract)
     return selected_contract
 
-
 def select_contract(contracts) -> dict:
-    """Pelaaja valitsee kontraktin 1-3."""
+    """Antaa pelaajan valita contracti 3 vaihto ehdosta"""
     while True:
         try:
             choice = int(input("\nValitse kontrakti (1-3): ")) - 1
@@ -82,6 +76,20 @@ def select_contract(contracts) -> dict:
         except ValueError:
             print("Syötä numero 1-3.")
 
+def contract_destination(chosen_contract, user):
+    """tarkistaa onko pelaaja saapunut kohde lento kenttään"""
+    palkkio = chosen_contract['palkkio']
+    current_airport = db.get_current_airport(user)
 
-# Kutsutaan kontraktigeneraattoria
-contract_generator()
+    if current_airport["ident"] == chosen_contract["destination_id"]:
+        db.update_currency_amount(palkkio, "+", user)
+        print(f"Sait vietyä paketin sovittuun määränpäähän! Tässä on sinun palkkiosi!: {palkkio}€")
+        return contract_generator(user)  # Generate new contracts after successful delivery
+    else:
+        print("Et ole saapunut oikeaan lentokenttään. Yritä uudelleen.")
+
+
+
+user = "heini"
+chosen_contract = contract_generator(user)
+contract_destination(chosen_contract, user)
