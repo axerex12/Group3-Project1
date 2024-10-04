@@ -1,9 +1,9 @@
-from flightgame.db.Database import Database
+# from flightgame.db.Database import Database
 from flightgame.gameclient.gameclient import GameClient
+from flightgame.flying.encounters import EncounterClient
 import random as rd
 import traceback
 
-from flightgame.flying.encounters import EncounterClient
 
 '''
 get a list of airports that are close
@@ -26,14 +26,13 @@ class Flying:
         self.encounter_client = EncounterClient()
         self.refill_amount = 0
 
-    def fly_menu(self, airport_type: str, distance: int, user: str):
+    def fly_menu(self, airport_type, distance):
         # encounter = encounters.Encounter()
 
         running = True
         while running:
             self.game_client.print_game_data()
-            airports_near = self.db.get_airports_by_distance(
-                airport_type, distance, user,5)
+            airports_near = self.db.get_airports_by_distance(airport_type, distance, self.game_client.screen_name,5)
 
             # list all nearby airports, make the user use numbers from 1
             # while selecting the airport since that is more natural
@@ -59,7 +58,7 @@ class Flying:
                 # encounter tähän väliin tai fly_to mukaan
                 if rd.randint(0, 6) == 6:
                     print("ENCOUNTER")
-                    player_airport = self.db.get_current_airport(user)
+                    player_airport = self.db.get_current_airport(self.game_client.screen_name)
                     start_coords = (player_airport["latitude_deg"], player_airport["longitude_deg"])
                     #print(start_coords)
                     end_coords = (selected_airport["latitude_deg"], selected_airport["longitude_deg"])
@@ -67,7 +66,7 @@ class Flying:
                     enc = self.encounter_client.random_encounter().start_encounter()
                     midpoint = self.get_midpoint(start_coords, end_coords)
                     airport = self.db.get_airport_by_coords(midpoint[0],midpoint[1])
-                    if not self.handle_encounter(enc, midpoint, user):
+                    if not self.handle_encounter(enc, midpoint):
                         break
 
                 # id INT(8),
@@ -76,14 +75,14 @@ class Flying:
                 # max_speed INT(16),
                 # PRIMARY KEY (id)
 
-                self.time_minutes += selected_airport["distance"]/self.db.get_plane(user)["max_speed"]*60
+                self.time_minutes += selected_airport["distance"]/self.db.get_plane(self.game_client.screen_name)["max_speed"]*60
                     
                 # fly_to olis varmaan parempi koti tälle
                 # update spent fuel // currently it just puts the amount of spend fuel as fuel_amount
                 # travel to the selected airport
                 #self.fly_to(selected_airport, user)
-                self.land(airport,user)
-                self.db.update_fuel_amount(self.calculate_spent_fuel(selected_airport["distance"], user), "-", user)
+                self.land(airport)
+                self.db.update_fuel_amount(self.calculate_spent_fuel(selected_airport["distance"]), "-", self.game_client.screen_name)
                 input("continue? y/n")
             except Exception as e:
                 traceback.print_exc()
@@ -91,12 +90,12 @@ class Flying:
         print("Ended flying")
         running = False
 
-    def fly_to(self, airport: dict, user: str):
+    def fly_to(self, airport: dict):
 
         # need to make some kind of class to keep track of what user we are on
         #print(f"\nFlying to |{airport['ident']}| |{airport['airport']}| in |{airport['country']}\n")
 
-        self.db.update_data( [{"location": airport["ident"], "screen_name": user}], "game", "screen_name")
+        self.db.update_data( [{"location": airport["ident"], "screen_name": self.game_client.screen_name}], "game", "screen_name")
 
     def get_midpoint(self, origin: tuple, destination: tuple) -> tuple[float, float]:
         """
@@ -111,17 +110,17 @@ class Flying:
         print("midpoint")
         return (x, y)
 
-    def calculate_spent_fuel(self, distance: int, user: str) -> int:
-        plane: dict = self.db.get_plane(user)
+    def calculate_spent_fuel(self, distance) -> int:
+        plane: dict = self.db.get_plane(self.game_client.screen_name)
         # return used fuel based on L/100km
-        return int(plane["fuel_consumption"] * distance / 100)
+        return int(plane["fuel_consumption"] * 0.5 * distance / 100)
 
-    def land(self, airport: dict,user: str):
+    def land(self, airport: dict):
         #print(airport)
         print(f"Landed in {airport['ident']} with time {round(self.time_minutes)} min")
-        self.db.update_data([{"location": airport["ident"], "screen_name": user}], "game", "screen_name")
+        self.db.update_data([{"location": airport["ident"], "screen_name": self.game_client.screen_name}], "game", "screen_name")
 
-    def handle_encounter(self, enc_data: tuple, coords: tuple,user: str) -> bool:
+    def handle_encounter(self, enc_data: tuple, coords: tuple) -> bool:
         """
         handles encounter data and decides actions
         :param self:
@@ -138,10 +137,10 @@ class Flying:
             #print(coords)
             if action== "Land":
                 airport = self.db.get_airport_by_coords(coords[0], coords[1])
-                self.land(airport,user)
+                self.land(airport)
                 self.time_minutes += time_added
                 #TODO: update db to accept floats in current_day
-                self.db.add_time(time_added, user)
+                self.db.add_time(time_added, self.game_client.screen_name)
                 return False
             elif action=="Wait":
                 print(f"You wait for {time_added} min")
@@ -154,6 +153,7 @@ class Flying:
             print("HAH! You died")
             return False
 
+    
 if __name__ == "__main__":
     print("Running!")
     #print(flying.get_midpoint((51.5072, 0.1276), (60.1699, 24.9384)))

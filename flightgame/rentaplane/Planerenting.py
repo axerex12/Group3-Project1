@@ -5,8 +5,8 @@ from flightgame.gameclient.gameclient import GameClient
 
 class Planerenting:
     # valitsee randomin lentokoneen
-    def __init__(self, db: Database, gc: GameClient):
-        self.db = db
+    def __init__(self, gc: GameClient):
+        self.db = gc.db
         self.gc = gc
 
     def plane_chooser(self, amount: int) -> list:

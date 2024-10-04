@@ -88,7 +88,7 @@ class Database:
         """)
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS cargo_list (
-                game_id INT(11),
+                game_id INT(11) AUTO_INCREMENT,
                 cargo_id INT(8),
                 PRIMARY KEY (game_id, cargo_id)
             );
