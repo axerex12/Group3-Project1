@@ -9,16 +9,16 @@ from flightgame.gameclient.gameclient import GameClient
 enc = EncounterClient()
 
 db = Database()
-gameclient = GameClient(db)
-gameclient.screen_name = "vesa"
-flying = Flying(gameclient)
+gc = GameClient(db)
+flying = Flying(gc)
+pr = Planerenting(db,gc)
 
 #db.add_data(Data.cargo,"cargo")
 #db.add_data(Data.planes,"plane")
 
 while True:
     print("Running!") # just because vscode is a bit special :D
-    flying.fly_menu(distance=1000, airport_type="large_airport") 
+    #flying.fly_menu(distance=1000, airport_type="large_airport", user="Heini")
     break
 # Data used here
 # db.add_data(Data.cargo,"cargo")
