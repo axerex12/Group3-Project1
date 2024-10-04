@@ -326,3 +326,23 @@ class Database:
                 WHERE screen_name = "{user}"
             """
         self.cursor.execute(sql_update_currency_amount)
+    
+    def get_data_row(self, key_value_pair: tuple, table: str):
+        """
+        get data from a table with a tuple that gives key and value to look for
+        at where key = "value";
+        :param data: list of dictionaries, where each dictionary is a row
+        :param table: name of the table
+        :return:
+        """
+        if len(key_value_pair) != 2:
+            print("Wrong amount of constraints for key value pair")
+            return
+
+        sql_get_data = f"""
+            SELECT *
+            FROM {table}
+            WHERE {key_value_pair[0]} = "{key_value_pair[1]}"
+        """
+        self.cursor.execute(sql_get_data)
+        return self.cursor.fetchone()

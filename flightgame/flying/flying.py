@@ -1,7 +1,5 @@
-from tracemalloc import Traceback
-
 from flightgame.db.Database import Database
-from flightgame.flying import encounters
+from flightgame.gameclient.gameclient import GameClient
 import random as rd
 import traceback
 
@@ -19,9 +17,11 @@ if at a right airport for a contract, deliver the contract
 horribly wip refactoring
 '''
 
+
 class Flying:
-    def __init__(self, database: Database) -> None:
-        self.db = database
+    def __init__(self, game_client: GameClient) -> None:
+        self.db = game_client.db
+        self.game_client = game_client
         self.time_minutes = 0
         self.encounter_client = EncounterClient()
         self.refill_amount = 0
@@ -31,6 +31,7 @@ class Flying:
 
         running = True
         while running:
+            self.game_client.print_game_data(user)
             airports_near = self.db.get_airports_by_distance(
                 airport_type, distance, user,5)
 
@@ -117,7 +118,7 @@ class Flying:
 
     def land(self, airport: dict,user):
         #print(airport)
-        print(f"Landed in {airport['ident']} with time {round(self.time_minutes)}")
+        print(f"Landed in {airport['ident']} with time {round(self.time_minutes)} min")
         self.db.update_data([{"location": airport["ident"], "screen_name": user}], "game", "screen_name")
 
     def handle_encounter(self, enc_data: tuple, coords: tuple,user) -> bool:
@@ -152,6 +153,10 @@ class Flying:
         else:
             print("HAH! You died")
             return False
+    
+    def print_info(self):
+        self.db.get_data()
+        print()
 
 if __name__ == "__main__":
     print("Running!")
