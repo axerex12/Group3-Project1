@@ -20,7 +20,8 @@ class GameClient:
 
         self.db.add_data([{"co2_consumed": self.co2_consumed, "co2_budget": self.co2_budget,
                             "currency": self.currency, "location": self.location["ident"],
-                            "fuel_amount": self.fuel_amount, "current_day": self.current_day
+                            "fuel_amount": self.fuel_amount, "current_day": self.current_day,
+                            "screen_name": self.screen_name, "rented_plane": self.rented_plane,
                           }], "game")
         
 
@@ -38,7 +39,7 @@ class GameClient:
 
     def print_game_data(self):
         string = f"""_________________________________________
-        \nLocation = {self.location} - {self.db.get_airport(self.location)}
+        \nLocation = {self.location["ident"]} - {self.location["name"]}
         \nFuel amount = {self.fuel_amount}
         \nCurrent day = {self.current_day}
         \nCurrency = {self.currency}
