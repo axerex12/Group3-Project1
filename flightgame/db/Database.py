@@ -1,3 +1,4 @@
+from importlib.metadata import metadata
 from locale import currency
 
 import mysql.connector
@@ -332,12 +333,18 @@ class Database:
         :param table: name of the table
         :return:
         """
-        sql_get_plane = f"""
+        sql_get_data = f"""
             SELECT *
             FROM {table}
             """
-        self.cursor.execute(sql_get_plane)
-        return self.cursor.fetchall()
+        self.cursor.execute(sql_get_data)
+        if self.cursor.rowcount == 0:
+            metadata = self.cursor.description
+            column_names = [i[0] for i in metadata]
+            output = dict(zip(column_names, [None] * len(column_names)))
+            return output
+        else:
+            return self.cursor.fetchall()
     
     def fetch_data_row(self, table, column, operator, data):
         """
@@ -348,12 +355,31 @@ class Database:
         :param data: data being looked for in the column
         :return:
         """
-        sql_get_plane = f"""
+        sql_get_data_row = f"""
             SELECT *
             FROM {table}
             WHERE {column} {operator} {data}
             """
-        self.cursor.execute(sql_get_plane)
+        self.cursor.execute(sql_get_data_row)
+        if self.cursor.rowcount == 0:
+            metadata = self.cursor.description
+            column_names = [i[0] for i in metadata]
+            output = dict(zip(column_names,[None]*len(column_names)))
+            return output
+        else:
+            return self.cursor.fetchall()
+
+    def fetch_data_max(self, table, data):
+        """
+        get the whole table from the database
+        :param table: name of the table
+        :return:
+        """
+        sql_get_data_max = f"""
+            SELECT MAX({data}) AS Output
+            FROM {table}
+            """
+        self.cursor.execute(sql_get_data_max)
         return self.cursor.fetchall()
 
     def get_random_plane(self, amount: int) -> list:
