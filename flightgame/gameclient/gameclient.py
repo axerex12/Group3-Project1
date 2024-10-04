@@ -1,7 +1,7 @@
 from flightgame.db.Database import Database
 
 class GameClient:
-    def __init__(self, database: Database):
+    def __init__(self, db: Database):
         self.co2_consumed = 0
         self.co2_budget = 100
         self.screen_name = "temp"
@@ -11,10 +11,10 @@ class GameClient:
         self.fuel_amount = 100
         self.current_day = 0
         self.cargo = []
-        self.db = database
+        self.db = db
 
-    def load_session(self,db: Database, user):
-        data = db.get_data_row(("game", user), "game")
+    def load_session(self, user):
+        data = self.db.fetch_data_row("game", "screen_name", '=', user)
         self.co2_consumed = data['co2_consumed']
         self.co2_budget = data['co2_budget']
         self.screen_name = data['screen_name']
@@ -25,13 +25,12 @@ class GameClient:
         self.current_day = data['current_day']
         self.cargo = data['cargo']
 
-    def print_game_data(self, user: str):
-        game_state = self.db.get_data_row(("screen_name", "heini"), "game")
+    def print_game_data(self):
         string = f"""_________________________________________
-\nLocation = {game_state["location"]} - {self.db.get_airport(game_state["location"])["name"]}
-Fuel amount = {game_state["fuel_amount"]}
-Current day = {game_state["current_day"]}
-Currency = {game_state["currency"]}
-_________________________________________
+        \nLocation = {self.location} - {self.db.get_airport(self.location)}
+        \nFuel amount = {self.fuel_amount}
+        \nCurrent day = {self.current_day}
+        \nCurrency = {self.currency}
+        _________________________________________
         """
         print(string)
