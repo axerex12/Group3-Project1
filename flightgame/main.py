@@ -12,7 +12,6 @@ db = Database()
 gameclient = GameClient(db)
 gameclient.screen_name = "vesa"
 flying = Flying(gameclient)
-pr = Planerenting()
 
 #db.add_data(Data.cargo,"cargo")
 #db.add_data(Data.planes,"plane")

@@ -32,8 +32,7 @@ class Flying:
         running = True
         while running:
             self.game_client.print_game_data()
-            airports_near = self.db.get_airports_by_distance(
-                airport_type, distance, self.game_client.screen_name,5)
+            airports_near = self.db.get_airports_by_distance(airport_type, distance, self.game_client.screen_name,5)
 
             # list all nearby airports, make the user use numbers from 1
             # while selecting the airport since that is more natural
@@ -114,7 +113,7 @@ class Flying:
     def calculate_spent_fuel(self, distance) -> int:
         plane: dict = self.db.get_plane(self.game_client.screen_name)
         # return used fuel based on L/100km
-        return int(plane["fuel_consumption"] * distance / 100)
+        return int(plane["fuel_consumption"] * 0.5 * distance / 100)
 
     def land(self, airport: dict):
         #print(airport)
