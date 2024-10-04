@@ -357,14 +357,15 @@ class Database:
         if self.cursor.rowcount == 0:
             metadata = self.cursor.description
             column_names = [i[0] for i in metadata]
-            output = dict(zip(column_names,[None]*len(column_names)))
+            output = zip(column_names,[None]*len(column_names))
             return output
         else:
             return self.cursor.fetchall()
 
-    def fetch_data_max(self, table, data):
+    def fetch_data_max(self, table: str, data: str):
         """
         get the whole table from the database
+        :param data: name of the column
         :param table: name of the table
         :return:
         """
