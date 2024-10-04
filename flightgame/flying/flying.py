@@ -67,7 +67,7 @@ class Flying:
                     enc = self.encounter_client.random_encounter().start_encounter()
                     midpoint = self.get_midpoint(start_coords, end_coords)
                     airport = self.db.get_airport_by_coords(midpoint[0],midpoint[1])
-                    if not self.handle_encounter(enc, midpoint, self.game_client.screen_name):
+                    if not self.handle_encounter(enc, midpoint):
                         break
 
                 # id INT(8),
@@ -82,7 +82,7 @@ class Flying:
                 # update spent fuel // currently it just puts the amount of spend fuel as fuel_amount
                 # travel to the selected airport
                 #self.fly_to(selected_airport, user)
-                self.land(airport,self.game_client.screen_name)
+                self.land(airport)
                 self.db.update_fuel_amount(self.calculate_spent_fuel(selected_airport["distance"], self.game_client.screen_name), "-", self.game_client.screen_name)
                 input("continue? y/n")
             except Exception as e:
@@ -138,7 +138,7 @@ class Flying:
             #print(coords)
             if action== "Land":
                 airport = self.db.get_airport_by_coords(coords[0], coords[1])
-                self.land(airport,self.game_client.screen_name)
+                self.land(airport)
                 self.time_minutes += time_added
                 #TODO: update db to accept floats in current_day
                 self.db.add_time(time_added, self.game_client.screen_name)
