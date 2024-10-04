@@ -1,4 +1,4 @@
-from flightgame.db.Database import Database
+# from flightgame.db.Database import Database
 from flightgame.gameclient.gameclient import GameClient
 import random as rd
 import traceback
@@ -83,7 +83,7 @@ class Flying:
                 # travel to the selected airport
                 #self.fly_to(selected_airport, user)
                 self.land(airport)
-                self.db.update_fuel_amount(self.calculate_spent_fuel(selected_airport["distance"], self.game_client.screen_name), "-", self.game_client.screen_name)
+                self.db.update_fuel_amount(self.calculate_spent_fuel(selected_airport["distance"]), "-", self.game_client.screen_name)
                 input("continue? y/n")
             except Exception as e:
                 traceback.print_exc()
