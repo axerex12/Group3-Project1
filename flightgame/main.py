@@ -11,7 +11,6 @@ enc = EncounterClient()
 db = Database()
 gameclient = GameClient(db)
 flying = Flying(gameclient)
-pr = Planerenting()
 
 #db.add_data(Data.cargo,"cargo")
 #db.add_data(Data.planes,"plane")
