@@ -222,7 +222,7 @@ class Database:
         """
         self.cursor.execute(sql_assign_cargo)
     
-    def remove_cargo(self, user) -> int:
+    def remove_cargo(self, user):
         """
         remove ALL cargo from user by screen_name
         :param user: screen_name of an user
@@ -267,8 +267,7 @@ class Database:
         """
         for item in data:
             columns = ','.join([str(name) for name, val in item.items()])
-            values = ','.join([f"'{val}'" if isinstance(
-                val, str) else str(val) for name, val in item.items()])
+            values = ','.join([f"'{val}'" if isinstance(val, str) else str(val) for name, val in item.items()])
             statement = f"INSERT INTO {table} ({columns}) VALUES ({values});"
             print(statement)
             self.cursor.execute(statement)
@@ -293,7 +292,7 @@ class Database:
             values.append(id_value)
             self.cursor.execute(sql, values)
     
-    def update_fuel_amount(self, fuel_amount, operator, user) -> None:
+    def update_fuel_amount(self, fuel_amount, operator, user) -> not None:
         """
         update the fuel amount
         :param fuel_amount: amount of fuel to be added or subtracted
@@ -315,7 +314,6 @@ class Database:
         sql = f"UPDATE game SET current_day=current_day+{amount_min/3600} WHERE screen_name='{user}'"
         self.cursor.execute(sql)
 
-
     def update_currency_amount(self, currency, operator, user):
         """
         update the currency amount
@@ -326,23 +324,47 @@ class Database:
                 WHERE screen_name = "{user}"
             """
         self.cursor.execute(sql_update_currency_amount)
-    
-    def get_data_row(self, key_value_pair: tuple, table: str):
+
+    def fetch_data(self, table):
         """
-        get data from a table with a tuple that gives key and value to look for
-        at where key = "value";
-        :param data: list of dictionaries, where each dictionary is a row
+        get the whole table from the database
         :param table: name of the table
         :return:
         """
-        if len(key_value_pair) != 2:
-            print("Wrong amount of constraints for key value pair")
-            return
-
-        sql_get_data = f"""
+        sql_get_plane = f"""
             SELECT *
             FROM {table}
-            WHERE {key_value_pair[0]} = "{key_value_pair[1]}"
+            """
+        self.cursor.execute(sql_get_plane)
+        return self.cursor.fetchall()
+    
+    def fetch_data_row(self, table, column, operator, data):
         """
-        self.cursor.execute(sql_get_data)
-        return self.cursor.fetchone()
+        get the specific row from a table from the database
+        :param table: name of the table
+        :param column: the specific column
+        :param operator: using default SQL operators
+        :param data: data being looked for in the column
+        :return:
+        """
+        sql_get_plane = f"""
+            SELECT *
+            FROM {table}
+            WHERE {column} {operator} {data}
+            """
+        self.cursor.execute(sql_get_plane)
+        return self.cursor.fetchall()
+
+    def get_random_plane(self, amount: int) -> list:
+        self.cursor.execute(f"SELECT * FROM plane ORDER BY RAND() LIMIT {amount}")
+        return self.cursor.fetchall()
+
+    def set_plane(self, user, plane_id, price):
+        """
+        get the current plane user is flying from the database
+        :param user: screen_name of an user
+        :param plane_id: id of the plane in planes table
+        :return:
+        """
+        sql_set_plane = f"UPDATE game SET rented_plane = {plane_id}, currency = currency-{price} WHERE screen_name = '{user}'"
+        self.cursor.execute(sql_set_plane)
