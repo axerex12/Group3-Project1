@@ -4,7 +4,7 @@ class GameClient:
     def __init__(self, database: Database):
         self.co2_consumed = 0
         self.co2_budget = 100
-        self.screen_name = "temp"
+        self.screen_name = "vesa"
         self.location= "temp"
         self.currency = 100000
         self.rented_plane = 1
@@ -25,8 +25,8 @@ class GameClient:
         self.current_day = data['current_day']
         self.cargo = data['cargo']
 
-    def print_game_data(self, user: str):
-        game_state = self.db.get_data_row(("screen_name", "heini"), "game")
+    def print_game_data(self):
+        game_state = self.db.get_data_row(("screen_name", self.screen_name), "game")
         string = f"""_________________________________________
 \nLocation = {game_state["location"]} - {self.db.get_airport(game_state["location"])["name"]}
 Fuel amount = {game_state["fuel_amount"]}
