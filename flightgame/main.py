@@ -18,7 +18,7 @@ pr = Planerenting()
 
 while True:
     print("Running!") # just because vscode is a bit special :D
-    flying.fly_menu(distance=1000, airport_type="large_airport", user="Heini")
+    flying.fly_menu(distance=1000, airport_type="large_airport")
     break
 # Data used here
 # db.add_data(Data.cargo,"cargo")

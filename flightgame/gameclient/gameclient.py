@@ -2,16 +2,27 @@ from flightgame.db.Database import Database
 
 class GameClient:
     def __init__(self, db: Database):
+        self.db = db
         self.co2_consumed = 0
         self.co2_budget = 100
-        self.screen_name = "temp"
-        self.location= "temp"
         self.currency = 100000
         self.rented_plane = 1
-        self.fuel_amount = 100
+        self.location= db.get_random_airport(1)[0]
+        self.fuel_amount = 10000
         self.current_day = 0
         self.cargo = []
-        self.db = db
+        
+        try:
+            self.screen_name = input("Give your nickname: ")
+        except Exception as e:
+            print(e)
+            return
+
+        self.db.add_data([{"co2_consumed": self.co2_consumed, "co2_budget": self.co2_budget,
+                            "currency": self.currency, "location": self.location["ident"],
+                            "fuel_amount": self.fuel_amount, "current_day": self.current_day
+                          }], "game")
+        
 
     def load_session(self, user):
         data = self.db.fetch_data_row("game", "screen_name", '=', user)
