@@ -1,9 +1,9 @@
 # from flightgame.db.Database import Database
 from flightgame.gameclient.gameclient import GameClient
+from flightgame.flying.encounters import EncounterClient
 import random as rd
 import traceback
 
-from flightgame.flying.encounters import EncounterClient
 
 '''
 get a list of airports that are close

@@ -1,5 +1,3 @@
-from mysql.connector.errors import ErrorClassTypes
-
 from flightgame.db.Database import Database
 
 class GameClient:
@@ -13,10 +11,22 @@ class GameClient:
         self.fuel_amount = 10000
         self.current_day = 0
         self.cargo = []
-        
+    
+    def input_screen_name(self) -> str:
+        while True:
+            try:
+                screen_name = input("Give your nickname: ")
+                return screen_name
+            except ValueError as e:
+                print(e)
+                return
+            
     def new_session(self):
+        """
+        creates an user and adds it to the database
+        """
         try:
-            self.screen_name = input("Give your nickname: ")
+            self.screen_name = self.input_screen_name()
         except Exception as e:
             print(e)
             return
@@ -27,8 +37,8 @@ class GameClient:
                             "screen_name": self.screen_name, "rented_plane": self.rented_plane,
                           }], "game")
 
-    def load_session(self, user):
-        data = self.db.fetch_data_row("game", "screen_name", '=', f'"{user}"')[0]
+    def load_session(self):
+        data = self.db.fetch_data_row("game", "screen_name", '=', f'"{self.input_screen_name()}"')[0]
         self.id = data['id']
         self.co2_consumed = data['co2_consumed']
         self.co2_budget = data['co2_budget']
@@ -41,7 +51,7 @@ class GameClient:
 
     def print_game_data(self):
         string = f"""_________________________________________
-        \nLocation = {self.location["ident"]} - {self.location["name"]}
+        \nLocation = {self.location} - {self.location}
         \nFuel amount = {self.fuel_amount}
         \nCurrent day = {self.current_day}
         \nCurrency = {self.currency}
