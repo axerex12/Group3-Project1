@@ -75,7 +75,7 @@ class Flying:
                 # max_speed INT(16),
                 # PRIMARY KEY (id)
 
-                self.time_minutes += (self.db.get_plane(user)["max_speed"] * selected_airport["distance"])/60
+                self.time_minutes += self.db.get_plane(user)["max_speed"]/selected_airport["distance"]*60
                     
                 # fly_to olis varmaan parempi koti tälle
                 # update spent fuel // currently it just puts the amount of spend fuel as fuel_amount
