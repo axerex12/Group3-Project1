@@ -31,7 +31,7 @@ class Flying:
 
         running = True
         while running:
-            self.game_client.print_game_data(user)
+            self.game_client.print_game_data()
             airports_near = self.db.get_airports_by_distance(
                 airport_type, distance, user,5)
 
@@ -153,10 +153,6 @@ class Flying:
         else:
             print("HAH! You died")
             return False
-    
-    def print_info(self):
-        self.db.get_data()
-        print()
 
 if __name__ == "__main__":
     print("Running!")

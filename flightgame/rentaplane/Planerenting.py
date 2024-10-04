@@ -1,10 +1,17 @@
+from locale import currency
+
 from flightgame.db.Database import Database
+from flightgame.gameclient.gameclient import GameClient
 
 class Planerenting:
     # valitsee randomin lentokoneen
-    def plane_chooser(self, db: Database, amount: int) -> list:
+    def __init__(self, db: Database, gc: GameClient):
+        self.db = db
+        self.gc = gc
+
+    def plane_chooser(self, amount: int) -> list:
         x = 0
-        random_planes = db.get_random_plane(amount)
+        random_planes = self.db.get_random_plane(amount)
         while x < amount:
             plane_fc = random_planes[x]['fuel_consumption']
             plane_ms = random_planes[x]['max_speed']
@@ -18,10 +25,10 @@ class Planerenting:
             f"Vehicle type: {random_plane['type']}\nFuel consumption: {random_plane['fuel_consumption']}\nMax speed: {random_plane['max_speed']}\nRenting Price weekly: {random_plane['price']}\nID: {order_id}"
             f"\n#|---|---|---|---|---|#")
 
-    def renting_menu(self, db: Database, user):
+    def renting_menu(self, user):
         print("Welcome to plane-to-succeed rental! Here's our current selection:")
         max_planes = 3
-        planes = self.plane_chooser(db, max_planes)
+        planes = self.plane_chooser(max_planes)
         i = 0
         while i < max_planes:
             self.plane_format(planes[i], i + 1)
@@ -38,5 +45,6 @@ class Planerenting:
                     continue
                 else:
                     planes[userInput-1]['price'] = 0
-                    db.set_plane(user,planes[userInput-1]['id'],planes[userInput-1]['price'])
+                    self.gc.rented_plane = planes[userInput-1]['id']
+                    self.gc.currency = self.gc.currency - planes[userInput-1]['price']
                     break
