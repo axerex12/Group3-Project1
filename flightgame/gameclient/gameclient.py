@@ -14,6 +14,7 @@ class GameClient:
         self.current_day = 0
         self.cargo = []
         
+    def new_session(self):
         try:
             self.screen_name = input("Give your nickname: ")
         except Exception as e:
@@ -25,11 +26,6 @@ class GameClient:
                             "fuel_amount": self.fuel_amount, "current_day": self.current_day,
                             "screen_name": self.screen_name, "rented_plane": self.rented_plane,
                           }], "game")
-        
-
-    def new_session(self, user, location):
-        self.screen_name = user
-        self.location = location
 
     def load_session(self, user):
         data = self.db.fetch_data_row("game", "screen_name", '=', f'"{user}"')[0]
