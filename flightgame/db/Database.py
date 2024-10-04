@@ -1,5 +1,3 @@
-from locale import currency
-
 import mysql.connector
 import json
 import os
@@ -24,6 +22,11 @@ class Database:
         self.validate_database()
 
     def validate_database(self):
+        """
+        alter the database if incorrectly formatted,
+        assumes that the base is flight game database given
+        :return:
+        """
         cursor = self.cursor
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS country (
@@ -91,12 +94,12 @@ class Database:
             );
         """)
 
-    def get_current_airport(self, user):
+    def get_current_airport(self, user: str) -> dict:
         """
-        Hakee nykyisen lentokentän tiedot käyttäjän mukaan.
+        Fetch current airport player is in
 
-        :param user: Käyttäjänimi.
-        :return: Nykyisen lentokentän tiedot sanakirjana tai None, jos ei löydy.
+        :param user: screen_name.
+        :return: current airport or None.
         """
         sql_fetch_current_airport = f"""
             SELECT name, ident, latitude_deg, longitude_deg
@@ -133,6 +136,7 @@ class Database:
     def get_airports_by_distance(self, airport_type: str, distance: int, user: str, limit: int) -> list:
         """
         get all airports from the database that are inside certain radius from user's current loc
+        :param limit:
         :param airport_type: limit what size of airports we are interested in
         :param distance: radius that we use to look for new airports
         :param user: screen_name of an user
@@ -161,17 +165,7 @@ class Database:
         self.cursor.execute(sql_get_airports_in_distance)
         return self.cursor.fetchall()
 
-    def get_current_airport(self, user: str) -> dict:
-        sql_fetch_current_airport = f"""
-                    select name, ident, latitude_deg, longitude_deg
-                    from airport
-                    inner join game on location = ident
-                    where screen_name = "{user}"
-                """
-        self.cursor.execute(sql_fetch_current_airport)
-        return self.cursor.fetchone()
-
-    def get_airport_by_coords(self, lat, lon, tolerance=1):
+    def get_airport_by_coords(self, lat: float, lon: float, tolerance=1.0) -> dict:
         """
         Get an airport by coordinates within a certain tolerance.
 
@@ -207,9 +201,10 @@ class Database:
                             """)
         return self.cursor.fetchall()
     
-    def assign_cargo(self, cargo_id, user):
+    def assign_cargo(self, cargo_id: int, user: str):
         """
-        assign_cargo to user by its id
+        assign_cargo to user by cargo_id
+        :param cargo_id:
         :param user: screen_name of an user
         :return:
         """
@@ -222,7 +217,7 @@ class Database:
         """
         self.cursor.execute(sql_assign_cargo)
     
-    def remove_cargo(self, user):
+    def remove_cargo(self, user: str):
         """
         remove ALL cargo from user by screen_name
         :param user: screen_name of an user
@@ -239,7 +234,7 @@ class Database:
         """
         self.cursor.execute(sql_remove_cargo, user)
 
-    def get_plane(self, user) -> dict:
+    def get_plane(self, user: str) -> dict:
         """
         get the current plane user is flying from the database
         :param user: screen_name of an user
@@ -274,7 +269,7 @@ class Database:
 
     def update_data(self, data: list, table: str, id_column="id"):
         """
-        update data in a table, the data needs to be in the same format
+        Update data in a table, the data needs to be in the same format
         :param data: list of dictionaries, where each dictionary is a row
         :param table: name of the table
         :param id_column: name of the field we use to narrow down
@@ -292,12 +287,12 @@ class Database:
             values.append(id_value)
             self.cursor.execute(sql, values)
     
-    def update_fuel_amount(self, fuel_amount, operator, user) -> not None:
+    def update_fuel_amount(self, fuel_amount: float, operator: str, user: str) -> not str:
         """
-        update the fuel amount
-        :param fuel_amount: amount of fuel to be added or subtracted
-        :operator: "+" or "-" to subtract or add
-        :user: screen_name of the user
+        Update the fuel amount
+        :param fuel_amount:  of fuel to be added or subtracted
+        :param operator: "+" or "-" to subtract or add
+        :param user: screen_name of the user
         """
         sql_update_fuel_amount = f"""
                 UPDATE game
@@ -310,13 +305,13 @@ class Database:
             return Exception("Incorrect operator or fuel amount")
         return "fuel updated"
 
-    def add_time(self, amount_min, user):
+    def add_time(self, amount_min: int, user: str):
         sql = f"UPDATE game SET current_day=current_day+{amount_min/3600} WHERE screen_name='{user}'"
         self.cursor.execute(sql)
 
     def update_currency_amount(self, currency, operator, user):
         """
-        update the currency amount
+        Update the currency amount
         """
         sql_update_currency_amount = f"""
                 UPDATE game
@@ -325,9 +320,9 @@ class Database:
             """
         self.cursor.execute(sql_update_currency_amount)
 
-    def fetch_data(self, table):
+    def fetch_data(self, table: str):
         """
-        get the whole table from the database
+        Get the whole table from the database
         :param table: name of the table
         :return:
         """
@@ -338,9 +333,9 @@ class Database:
         self.cursor.execute(sql_get_plane)
         return self.cursor.fetchall()
     
-    def fetch_data_row(self, table, column, operator, data):
+    def fetch_data_row(self, table: str, column: str, operator: str, data: str) -> list:
         """
-        get the specific row from a table from the database
+        Get the specific row from a table from the database
         :param table: name of the table
         :param column: the specific column
         :param operator: using default SQL operators
@@ -359,9 +354,10 @@ class Database:
         self.cursor.execute(f"SELECT * FROM plane ORDER BY RAND() LIMIT {amount}")
         return self.cursor.fetchall()
 
-    def set_plane(self, user, plane_id, price):
+    def set_plane(self, user: str, plane_id: int, price: int):
         """
-        get the current plane user is flying from the database
+        Get the current plane user is flying from the database
+        :param price:
         :param user: screen_name of an user
         :param plane_id: id of the plane in planes table
         :return:
