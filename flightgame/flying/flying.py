@@ -26,7 +26,7 @@ class Flying:
         self.encounter_client = EncounterClient()
         self.refill_amount = 0
 
-    def fly_menu(self, airport_type, distance, user):
+    def fly_menu(self, airport_type: str, distance: int, user: str):
         # encounter = encounters.Encounter()
 
         running = True
@@ -111,17 +111,17 @@ class Flying:
         print("midpoint")
         return (x, y)
 
-    def calculate_spent_fuel(self, distance, user) -> int:
+    def calculate_spent_fuel(self, distance: int, user: str) -> int:
         plane: dict = self.db.get_plane(user)
         # return used fuel based on L/100km
         return int(plane["fuel_consumption"] * distance / 100)
 
-    def land(self, airport: dict,user):
+    def land(self, airport: dict,user: str):
         #print(airport)
         print(f"Landed in {airport['ident']} with time {round(self.time_minutes)} min")
         self.db.update_data([{"location": airport["ident"], "screen_name": user}], "game", "screen_name")
 
-    def handle_encounter(self, enc_data: tuple, coords: tuple,user) -> bool:
+    def handle_encounter(self, enc_data: tuple, coords: tuple,user: str) -> bool:
         """
         handles encounter data and decides actions
         :param self:
