@@ -9,8 +9,9 @@ from flightgame.gameclient.gameclient import GameClient
 enc = EncounterClient()
 
 db = Database()
-gameclient = GameClient(db)
-flying = Flying(gameclient)
+gc = GameClient(db)
+flying = Flying(gc)
+pr = Planerenting(db,gc)
 
 #db.add_data(Data.cargo,"cargo")
 #db.add_data(Data.planes,"plane")
