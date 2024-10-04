@@ -346,3 +346,17 @@ class Database:
         """
         self.cursor.execute(sql_get_data)
         return self.cursor.fetchone()
+
+    def get_random_plane(self, amount: int) -> list:
+        self.cursor.execute(f"SELECT * FROM plane ORDER BY RAND() LIMIT {amount}")
+        return self.cursor.fetchall()
+
+    def set_plane(self, user, plane_id, price):
+        """
+        get the current plane user is flying from the database
+        :param user: screen_name of an user
+        :param plane_id: id of the plane in planes table
+        :return:
+        """
+        sql_set_plane = f"UPDATE game SET rented_plane = {plane_id}, currency = currency-{price} WHERE screen_name = '{user}'"
+        self.cursor.execute(sql_set_plane)
