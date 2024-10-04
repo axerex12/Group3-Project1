@@ -10,6 +10,7 @@ enc = EncounterClient()
 
 db = Database()
 gameclient = GameClient(db)
+gameclient.screen_name = "vesa"
 flying = Flying(gameclient)
 
 #db.add_data(Data.cargo,"cargo")
