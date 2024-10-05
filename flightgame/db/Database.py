@@ -28,6 +28,11 @@ class Database:
         :return:
         """
         cursor = self.cursor
+
+        cursor.execute("DROP TABLE IF EXISTS goal_reached")
+        cursor.execute("DROP TABLE IF EXISTS goal")
+
+
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS country (
                 iso_country VARCHAR(40) PRIMARY KEY,
@@ -71,11 +76,13 @@ class Database:
         """)
         cursor.execute("""
             ALTER TABLE game 
+                MODIFY COLUMN id INT(11) AUTO_INCREMENT,
                 ADD COLUMN IF NOT EXISTS (currency INT(32),
                 rented_plane INT(8),
                 fuel_amount INT (8),
                 current_day INT (8),
-                FOREIGN KEY (rented_plane) REFERENCES plane(id))
+                FOREIGN KEY (rented_plane) REFERENCES plane(id)
+                )
         """)
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS cargo (
@@ -88,7 +95,7 @@ class Database:
         """)
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS cargo_list (
-                game_id INT(11) AUTO_INCREMENT,
+                game_id INT(11),
                 cargo_id INT(8),
                 PRIMARY KEY (game_id, cargo_id)
             );
