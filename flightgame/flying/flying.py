@@ -31,6 +31,9 @@ class Flying:
 
         running = True
         while running:
+            if self.game_client.fuel_amount <= 0:
+                print("Fuel ran out and you fell in the ocean! :/")
+                break
             self.game_client.print_game_data()
             airports_near = self.db.get_airports_by_distance(airport_type, distance, self.game_client.screen_name,5)
 
@@ -116,6 +119,7 @@ class Flying:
         self.game_client.location = airport["ident"]
         # converts time to current day by d = 24h * 60 min/h
         self.game_client.current_day = int(self.time_minutes/1440)
+        self.game_client.fuel_amount += self.refill_amount
         self.game_client.save_game_data(self.game_client.screen_name)
 
     def handle_encounter(self, enc_data: tuple, coords: tuple) -> bool:
