@@ -8,6 +8,7 @@ def main_menu(game_client: GameClient):
     pr = Planerenting(game_client)
 
     gameName = "Boeing Simulator 2024"
+    search_radius = 2000
 
     print("""
     //////////////////////////////////////////////////////////////
@@ -31,17 +32,17 @@ def main_menu(game_client: GameClient):
         if userInput == "1":
             game_client.new_session()
             pr.renting_menu()
-            fl.fly_menu("large_airport", 1000)
-            break
+            fl.fly_menu("large_airport", search_radius)
+            exit(1)
         elif userInput == "2":
             game_client.load_session()
             pr.renting_menu()
-            fl.fly_menu("large_airport", 1000)
-            print()
+            fl.fly_menu("large_airport", search_radius)
+            exit(1)
         elif userInput == "3":
             print()
+            continue
         elif userInput == "4":
             exit(1)
         else:
             print("Invalid input, retry.")
-    print("test")

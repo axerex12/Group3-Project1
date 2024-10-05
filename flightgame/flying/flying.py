@@ -82,20 +82,14 @@ class Flying:
                 # travel to the selected airport
                 #self.fly_to(selected_airport, user)
                 self.land(airport)
-                self.db.update_fuel_amount(self.calculate_spent_fuel(selected_airport["distance"]), "-", self.game_client.screen_name)
+                # self.db.update_fuel_amount(self.calculate_spent_fuel(selected_airport["distance"]), "-", self.game_client.screen_name)
+                self.game_client.fuel_amount -= self.calculate_spent_fuel(selected_airport["distance"]) 
                 input("continue? y/n")
             except Exception as e:
                 traceback.print_exc()
                 #continue
         print("Ended flying")
         running = False
-
-    def fly_to(self, airport: dict):
-
-        # need to make some kind of class to keep track of what user we are on
-        #print(f"\nFlying to |{airport['ident']}| |{airport['airport']}| in |{airport['country']}\n")
-
-        self.db.update_data( [{"location": airport["ident"], "screen_name": self.game_client.screen_name}], "game", "screen_name")
 
     def get_midpoint(self, origin: tuple, destination: tuple) -> tuple[float, float]:
         """
@@ -118,7 +112,11 @@ class Flying:
     def land(self, airport: dict):
         #print(airport)
         print(f"Landed in {airport['ident']} with time {round(self.time_minutes)} min")
-        self.db.update_data([{"location": airport["ident"], "screen_name": self.game_client.screen_name}], "game", "screen_name")
+        # self.db.update_data([{"location": airport["ident"], "screen_name": self.game_client.screen_name}], "game", "screen_name")
+        self.game_client.location = airport["ident"]
+        # converts time to current day by d = 24h * 60 min/h
+        self.game_client.current_day = int(self.time_minutes/1440)
+        self.game_client.save_game_data(self.game_client.screen_name)
 
     def handle_encounter(self, enc_data: tuple, coords: tuple) -> bool:
         """
@@ -140,7 +138,7 @@ class Flying:
                 self.land(airport)
                 self.time_minutes += time_added
                 #TODO: update db to accept floats in current_day
-                self.db.add_time(time_added, self.game_client.screen_name)
+                # self.db.add_time(time_added, self.game_client.screen_name)
                 return False
             elif action=="Wait":
                 print(f"You wait for {time_added} min")
