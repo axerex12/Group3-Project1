@@ -31,6 +31,9 @@ class Flying:
 
         running = True
         while running:
+            if self.game_client.fuel_amount <= 0:
+                print("Fuel ran out and you fell in the ocean! :/")
+                break
             self.game_client.print_game_data()
             airports_near = self.db.get_airports_by_distance(airport_type, distance, self.game_client.screen_name,5)
 
