@@ -154,6 +154,24 @@ class Data:
 
     planes = [
         {
+            "id": 1,
+            "type": "helicopter",
+            "fuel_consumption": 180,
+            "max_speed": 220
+        },
+        {
+            "id": 2,
+            "type": "helicopter",
+            "fuel_consumption": 180,
+            "max_speed": 220
+        },
+        {
+            "id": 3,
+            "type": "helicopter",
+            "fuel_consumption": 180,
+            "max_speed": 220
+        },
+        {
             "id": 4,
             "type": "helicopter",
             "fuel_consumption": 180,
