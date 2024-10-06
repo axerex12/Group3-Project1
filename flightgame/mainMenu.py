@@ -36,7 +36,6 @@ def main_menu(game_client: GameClient):
             exit(1)
         elif userInput == "2":
             game_client.load_session()
-            pr.renting_menu()
             fl.fly_menu("large_airport", search_radius)
             exit(1)
         elif userInput == "3":

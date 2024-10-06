@@ -9,5 +9,3 @@ db = Database()
 gc = GameClient(db)
 
 mainMenu.main_menu(gc)
-
-#TODO two people with same name not working

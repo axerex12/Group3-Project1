@@ -82,4 +82,4 @@ class GameClient:
         if newsave:
             self.db.add_data(outputdata,"game")
         else:
-            self.db.update_data(outputdata,"game","id")
+            self.db.update_data(outputdata,"game","screen_name")

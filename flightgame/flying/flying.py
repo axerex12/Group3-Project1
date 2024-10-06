@@ -88,7 +88,10 @@ class Flying:
                     print("Fuel ran out and you fell in the ocean! :/")
                     break
                 self.game_client.fuel_amount += self.refill_amount
-                input("continue? y/n")
+                if input("continue? y/n").upper() != "Y":
+                    self.game_client.save_game_data(self.game_client.screen_name)
+                    running = False
+                    break
             except Exception as e:
                 traceback.print_exc()
                 #continue
