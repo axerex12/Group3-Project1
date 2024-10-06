@@ -61,14 +61,8 @@ class GameClient:
         print(string)
 
     def save_game_data(self, user):
-        newsave = False
         data = self.db.fetch_data_row("game", "screen_name", '=', f'"{user}"')[0]
         # print(data)
-        if data['id'] is None:
-            data['id'] = int(self.db.fetch_data_max("game","id")[0]['Output'])+1
-            newsave = True
-        else:
-            data['id'] = self.id
         data['co2_consumed'] = self.co2_consumed
         data['co2_budget'] = self.co2_budget
         data['screen_name'] = user #varmistaa että tallentaa samalla nimellä millä haettiin
@@ -79,7 +73,4 @@ class GameClient:
         data['current_day'] = self.current_day
         outputdata = [data]
         # print(outputdata)
-        if newsave:
-            self.db.add_data(outputdata,"game")
-        else:
-            self.db.update_data(outputdata,"game","screen_name")
+        self.db.update_data(outputdata,"game","screen_name")
