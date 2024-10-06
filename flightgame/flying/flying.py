@@ -31,6 +31,7 @@ class Flying:
 
         running = True
         while running:
+            self.game_client.save_game_data(self.game_client.screen_name)
             self.game_client.print_game_data()
             airports_near = self.db.get_airports_by_distance(airport_type, distance, self.game_client.screen_name,5)
 
@@ -40,7 +41,7 @@ class Flying:
 
             for airport in airports_near:
             # give random amount of fuel to refill at airports
-                fuel_refill_amount = rd.randint(200,1000)
+                fuel_refill_amount = rd.randint(100,300)
                 fuel_refill_list.append(fuel_refill_amount)
                 print(f"Fly to and refill fuel ({fuel_refill_amount}) at|{airport['airport']}| in |{airport['country']}| {airport['distance']:.0f} km by selecting ({airports_near.index(airport) + 1})")
 
@@ -123,7 +124,6 @@ class Flying:
         self.game_client.location = airport["ident"]
         # converts time to current day by d = 24h * 60 min/h
         self.game_client.current_day = int(self.time_minutes/1440)
-        self.game_client.save_game_data(self.game_client.screen_name)
 
     def handle_encounter(self, enc_data: tuple, coords: tuple) -> bool:
         """
