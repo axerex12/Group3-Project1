@@ -32,7 +32,7 @@ class GameClient:
         """
         try:
             name = self.input_screen_name()
-            if not self.db.user_exists_by_name(name):
+            if self.db.user_exists_by_name(name):
                 return
             self.screen_name = name
         except Exception as e:
