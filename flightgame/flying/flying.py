@@ -2,7 +2,6 @@
 from flightgame.gameclient.gameclient import GameClient
 from flightgame.flying.encounters import EncounterClient
 import random as rd
-from flightgame.contract.contracter import ContractClient
 import traceback
 
 
