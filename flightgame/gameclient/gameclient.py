@@ -96,4 +96,4 @@ class GameClient:
                 # Generate a new contract
                 self.current_contract = self.contract_client.contract_generator(self.screen_name)
             else:
-                print("This is not the correct destination for your contract.")
+                print("This is not the destination for your contract.")
