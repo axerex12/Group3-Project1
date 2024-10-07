@@ -129,7 +129,7 @@ class Database:
         return self.cursor.fetchall()[0]
 
     def get_random_airport(self, amount: int) -> list:
-        self.cursor.execute(f"SELECT * FROM airport ORDER BY RAND() LIMIT {amount}")
+        self.cursor.execute(f"SELECT * FROM airport WHERE type IN ('large_airport','heliport') ORDER BY RAND() LIMIT {amount}")
         return self.cursor.fetchall()
 
     def get_airports_by_iso(self, iso: str) -> list:
