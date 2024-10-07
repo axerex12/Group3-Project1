@@ -1,6 +1,7 @@
 from flightgame.gameclient.gameclient import GameClient
 from flightgame.flying.flying import Flying
 from flightgame.rentaplane.Planerenting import Planerenting
+import story
 #Temporary, proof of concept
 
 def main_menu(game_client: GameClient):
@@ -27,7 +28,7 @@ def main_menu(game_client: GameClient):
 
     #TODO: check player rented plane and change fly_meny to search for correct type
     while True:
-        print(f"## {gameName} ##\n1) New Session\n2) Load previous session\n3) Credits\n4) Exit")
+        print(f"## {gameName} ##\n1) New Session\n2) Load previous session\n3) Credits\n4) Exit\n5) Story")
         userInput = input("> ")
         if userInput == "1":
             game_client.new_session()
@@ -41,5 +42,8 @@ def main_menu(game_client: GameClient):
             continue
         elif userInput == "4":
             exit(0)
+        elif userInput == "5":
+            for line in story.getStory():
+                print(line)
         else:
             print("Invalid input, retry.")
