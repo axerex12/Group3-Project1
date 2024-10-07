@@ -13,6 +13,7 @@ class GameClient:
         self.current_day = 0
         self.cargo = []
         self.gameover = False
+        self.rent_paid = False
     
     def input_screen_name(self) -> str:
         while True:

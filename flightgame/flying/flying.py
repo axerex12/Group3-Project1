@@ -39,6 +39,9 @@ class Flying:
         ## check if contract fits the airport
         # refill fuel ok
 
+        # hack to keep the current day when loading a new session
+        self.time_minutes = self.game_client.current_day * 1440
+
         while not self.game_client.gameover:
             # save game data
             self.game_client.save_game_data(self.game_client.screen_name)
@@ -55,6 +58,10 @@ class Flying:
             
             # select the airport to fly to
             user_input = int(input("Selection: ")) - 1
+            while user_input <= 0 and user_input >= len(airports_near) - 1:
+                print("invalid selection")
+                user_input = int(input("Selection: ")) - 1
+            
             # assign from airports_near to airport
             airport = airports_near[user_input]
             # print the airport being flown to
@@ -74,6 +81,7 @@ class Flying:
                 airport = self.db.get_airport_by_coords(midpoint[0],midpoint[1])
                 if not self.handle_encounter(enc, midpoint):
                     self.game_client.gameover = True
+                    break
             else:
                 # adding flight time to player
                 self.time_minutes += airport["distance"]/self.db.get_plane(self.game_client.screen_name)["max_speed"]*60
@@ -117,9 +125,13 @@ class Flying:
         # converts time to current day by d = 24h * 60 min/h
         self.game_client.current_day = int(self.time_minutes/1440)
         # pay the rent every 7th day
-        if self.game_client.current_day % 7 == 0:
+        if (self.game_client.current_day % 7 == 0 and self.game_client.current_day != 0) and not self.game_client.rent_paid:
             # self.game_client.currency -= self.db.get_plane(self.game_client.screen_name)["rent"]
+            print("Paying rent for the plane")
             self.game_client.currency -= 1000
+            self.game_client.rent_paid = True
+        if (self.game_client.current_day % 7 != 0):
+            self.game_client.rent_paid = False
 
 
     def handle_encounter(self, enc_data: tuple, coords: tuple) -> bool:
