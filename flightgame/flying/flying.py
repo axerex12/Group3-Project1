@@ -1,6 +1,7 @@
 # from flightgame.db.Database import Database
 from flightgame.gameclient.gameclient import GameClient
 from flightgame.flying.encounters import EncounterClient
+from geopy import distance
 import random as rd
 import traceback
 
@@ -25,6 +26,19 @@ class Flying:
         self.time_minutes = 0
         self.encounter_client = EncounterClient()
         self.refill_amount = 0
+
+    def calculate_distance(self, current_airport) -> float:
+        """laskee lentokenttien etäysyydet."""
+        airport2 = self.db.get_airport(self.game_client.current_contract["destination_id"])
+
+        if current_airport is None or airport2 is None:
+            raise ValueError("One or both airports could not be found.")
+
+        ap1_cords = (current_airport['latitude_deg'], current_airport['longitude_deg'])
+        ap2_cords = (airport2['latitude_deg'], airport2['longitude_deg'])
+
+        dist = distance.distance(ap1_cords, ap2_cords).kilometers
+        return dist
 
     def fly_menu(self, airport_type, distance):
         # encounter = encounters.Encounter()
@@ -56,10 +70,11 @@ class Flying:
                 fuel_refill_amount = rd.randint(100,300)
                 airport["fuel_refill_amount"] = fuel_refill_amount
                 print(f"Fly to and refill fuel ({fuel_refill_amount}) at|{airport['airport']}| in |{airport['country']}| {airport['distance']:.0f} km by selecting ({airports_near.index(airport) + 1})")
+                print(f"Distance from cargo destination {self.calculate_distance(airport):.0f} km")
             
             # select the airport to fly to
             user_input = int(input("Selection: ")) - 1
-            while user_input <= 0 and user_input >= len(airports_near) - 1:
+            while (user_input <= 0 and user_input >= len(airports_near) - 1) or len(airports_near) == 1:
                 print("invalid selection")
                 user_input = int(input("Selection: ")) - 1
             

@@ -9,7 +9,7 @@ def main_menu(game_client: GameClient):
     pr = Planerenting(game_client)
 
     gameName = "Boeing Simulator 2024"
-    search_radius = 2000
+    search_radius = 600
 
     print("""
     //////////////////////////////////////////////////////////////
