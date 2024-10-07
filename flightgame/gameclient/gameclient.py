@@ -108,7 +108,7 @@ class GameClient:
             return
 
         # Check if the player has reached the destination
-        if self.location == self.current_contract['destination_id']:
+        if self.location["ident"] == self.current_contract['destination_id']:
             print("You have arrived at the destination airport!")
             # Pay the player and generate a new contract
             reward = self.current_contract['palkkio']

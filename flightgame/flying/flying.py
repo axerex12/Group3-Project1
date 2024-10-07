@@ -71,14 +71,15 @@ class Flying:
                 # give random amount of fuel to refill at airports
                 fuel_refill_amount = rd.randint(100,300)
                 airport["fuel_refill_amount"] = fuel_refill_amount
-                print(f"Fly to and refill fuel ({fuel_refill_amount}) at|{airport['airport']}| in |{airport['country']}| {airport['distance']:.0f} km by selecting ({airports_near.index(airport) + 1})")
+                print(f"Fly to and refill fuel ({fuel_refill_amount}) at|{airport['airport']}| in |{airport['country']}| {airport['distance']:.0f} km by selecting ({airports_near.index(airport)})")
                 print(f"Distance from cargo destination {self.calculate_distance(airport):.0f} km")
             
             # select the airport to fly to
-            user_input = int(input("Selection: ")) - 1
-            while (user_input <= 0 and user_input >= len(airports_near) - 1) or len(airports_near) == 1:
+            user_input = int(input("Selection: "))
+            while (user_input <= 0 and user_input >= len(airports_near) - 1):
                 print("invalid selection")
-                user_input = int(input("Selection: ")) - 1
+                user_input = int(input("Selection: "))
+            #     user_input = int(input("Selection: ")) - 1
             
             # assign from airports_near to airport
             airport = airports_near[user_input]
