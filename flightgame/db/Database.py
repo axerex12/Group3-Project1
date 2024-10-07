@@ -405,7 +405,7 @@ class Database:
         sql = f"""
             SELECT screen_name
             FROM game
-            WHERE screen_name = {user}
+            WHERE screen_name = '{user}'
         """
         self.cursor.execute(sql)
         if len(self.cursor.fetchall()) > 0:
