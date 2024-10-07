@@ -25,6 +25,7 @@ class Planerenting:
             f"Vehicle type: {random_plane['type']}\nFuel consumption: {random_plane['fuel_consumption']}\nMax speed: {random_plane['max_speed']}\nRenting Price weekly: {random_plane['price']}\nID: {order_id}"
             f"\n#|---|---|---|---|---|#")
 
+    #TODO: money substraction
     def renting_menu(self):
         print("Welcome to plane-to-succeed rental! Here's our current selection:")
         max_planes = 3
