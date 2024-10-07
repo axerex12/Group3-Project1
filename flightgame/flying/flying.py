@@ -29,6 +29,8 @@ class Flying:
 
     def calculate_distance(self, current_airport) -> float:
         """laskee lentokenttien etäysyydet."""
+        if self.game_client.current_contract == None:
+            return 0
         airport2 = self.db.get_airport(self.game_client.current_contract["destination_id"])
 
         if current_airport is None or airport2 is None:
