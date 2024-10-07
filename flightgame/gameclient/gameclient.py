@@ -54,7 +54,7 @@ class GameClient:
 
     def print_game_data(self):
         string = f"""_________________________________________
-        \nLocation = {self.location} - {self.location}
+        \nLocation = {self.location} - {self.db.get_airport(self.location)["name"]}
         \nFuel amount = {self.fuel_amount}
         \nCurrent day = {self.current_day}
         \nCurrency = {self.currency}

@@ -110,7 +110,7 @@ class Flying:
     def calculate_spent_fuel(self, distance) -> int:
         plane: dict = self.db.get_plane(self.game_client.screen_name)
         # return used fuel based on L/100km
-        return int(plane["fuel_consumption"] * 0.5 * distance / 100)
+        return int(plane["fuel_consumption"] * distance / 100)
 
     def land(self, airport: dict):
         if airport == None:
