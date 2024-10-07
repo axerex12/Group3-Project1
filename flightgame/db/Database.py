@@ -77,10 +77,11 @@ class Database:
         cursor.execute("""
             ALTER TABLE game 
                 MODIFY COLUMN id INT(11) AUTO_INCREMENT,
+                MODIFY COLUMN IF EXISTS current_day FLOAT,
                 ADD COLUMN IF NOT EXISTS (currency INT(32),
                 rented_plane INT(8),
                 fuel_amount INT (8),
-                current_day INT (8),
+                current_day FLOAT,
                 FOREIGN KEY (rented_plane) REFERENCES plane(id)
                 )
         """)
