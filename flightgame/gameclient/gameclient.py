@@ -12,6 +12,7 @@ class GameClient:
         self.fuel_amount = 10000
         self.current_day = 0
         self.cargo = []
+        self.gameover = False
     
     def input_screen_name(self) -> str:
         while True:

@@ -29,75 +29,62 @@ class Flying:
     def fly_menu(self, airport_type, distance):
         # encounter = encounters.Encounter()
 
-        running = True
-        while running:
+        # save game data ok
+        # get airports to fly to ok
+        # select airports ok
+        # fly ok
+        # check encounter ok
+        # check fuel ok
+        # land ok
+        ## check if contract fits the airport
+        # refill fuel ok
+
+        while not self.game_client.gameover:
+            # save game data
             self.game_client.save_game_data(self.game_client.screen_name)
             self.game_client.print_game_data()
+
             airports_near = self.db.get_airports_by_distance(airport_type, distance, self.game_client.screen_name,5)
 
-            # list all nearby airports, make the user use numbers from 1
-            # while selecting the airport since that is more natural
-            fuel_refill_list = []
-
+            # list all airports
             for airport in airports_near:
-            # give random amount of fuel to refill at airports
+                # give random amount of fuel to refill at airports
                 fuel_refill_amount = rd.randint(100,300)
-                fuel_refill_list.append(fuel_refill_amount)
+                airport["fuel_refill_amount"] = fuel_refill_amount
                 print(f"Fly to and refill fuel ({fuel_refill_amount}) at|{airport['airport']}| in |{airport['country']}| {airport['distance']:.0f} km by selecting ({airports_near.index(airport) + 1})")
+            
+            # select the airport to fly to
+            user_input = int(input("Selection: ")) - 1
+            # assign from airports_near to airport
+            airport = airports_near[user_input]
+            # print the airport being flown to
+            print(f"\nFlying to |{airport['ident']}| |{airport['airport']}| in |{airport['country']}\n")
+            # set amount of fuel to be refilled
+            self.refill_amount = airport["fuel_refill_amount"]
 
-            try:
-                user_input = int(input("Selection: ")) - 1
-                if user_input + 1 <= 0:
-                    raise Exception("Selection less or equal to zero!")
-                airport = selected_airport = airports_near[user_input]
-                print(f"\nFlying to |{selected_airport['ident']}| |{selected_airport['airport']}| in |{selected_airport['country']}\n")
-                selected_airport = airports_near[user_input]
-                self.refill_amount = fuel_refill_list[user_input]
-                # travel to the selected airport
-                #self.fly_to(selected_airport, user)
-
-                # encounter tähän väliin tai fly_to mukaan
-                if rd.randint(0, 6) == 6:
-                    print("ENCOUNTER")
-                    player_airport = self.db.get_current_airport(self.game_client.screen_name)
-                    start_coords = (player_airport["latitude_deg"], player_airport["longitude_deg"])
-                    #print(start_coords)
-                    end_coords = (selected_airport["latitude_deg"], selected_airport["longitude_deg"])
-                    #print(end_coords)
-                    enc = self.encounter_client.random_encounter().start_encounter()
-                    midpoint = self.get_midpoint(start_coords, end_coords)
-                    airport = self.db.get_airport_by_coords(midpoint[0],midpoint[1])
-                    if not self.handle_encounter(enc, midpoint):
-                        break
-
-                # id INT(8),
-                # type VARCHAR(40),
-                # fuel_consumption INT(32),
-                # max_speed INT(16),
-                # PRIMARY KEY (id)
-
-                self.time_minutes += selected_airport["distance"]/self.db.get_plane(self.game_client.screen_name)["max_speed"]*60
-                    
-                # fly_to olis varmaan parempi koti tälle
-                # update spent fuel // currently it just puts the amount of spend fuel as fuel_amount
-                # travel to the selected airport
-                #self.fly_to(selected_airport, user)
+            if rd.randint(0, 6) == 6:
+                print("ENCOUNTER")
+                player_airport = self.db.get_current_airport(self.game_client.screen_name)
+                start_coords = (player_airport["latitude_deg"], player_airport["longitude_deg"])
+                #print(start_coords)
+                end_coords = (airport["latitude_deg"], airport["longitude_deg"])
+                #print(end_coords)
+                enc = self.encounter_client.random_encounter().start_encounter()
+                midpoint = self.get_midpoint(start_coords, end_coords)
+                airport = self.db.get_airport_by_coords(midpoint[0],midpoint[1])
+                if not self.handle_encounter(enc, midpoint):
+                    self.game_client.gameover = True
+            else:
+                # adding flight time to player
+                self.time_minutes += airport["distance"]/self.db.get_plane(self.game_client.screen_name)["max_speed"]*60
+                # land and update fuel, date, location
                 self.land(airport)
-                # self.db.update_fuel_amount(self.calculate_spent_fuel(selected_airport["distance"]), "-", self.game_client.screen_name)
-                self.game_client.fuel_amount -= self.calculate_spent_fuel(selected_airport["distance"]) 
-                if self.game_client.fuel_amount <= 0:
-                    print("Fuel ran out and you fell in the ocean! :/")
-                    break
-                self.game_client.fuel_amount += self.refill_amount
-                if input("continue? y/n").upper() != "Y":
-                    self.game_client.save_game_data(self.game_client.screen_name)
-                    running = False
-                    break
-            except Exception as e:
-                traceback.print_exc()
-                #continue
-        print("Ended flying")
-        running = False
+
+            # asking if user wants to quit
+            if input("continue? y/n: ").upper() != "Y":
+                print("Saving and Exiting the game.")
+                self.game_client.save_game_data(self.game_client.screen_name)
+                self.game_client.gameover = True
 
     def get_midpoint(self, origin: tuple, destination: tuple) -> tuple[float, float]:
         """
@@ -118,12 +105,22 @@ class Flying:
         return int(plane["fuel_consumption"] * 0.5 * distance / 100)
 
     def land(self, airport: dict):
+        if airport == None:
+            print("You got lost and you died")
+            self.game_client.gameover = True
         #print(airport)
-        print(f"Landed in {airport['ident']} with time {round(self.time_minutes)} min")
-        # self.db.update_data([{"location": airport["ident"], "screen_name": self.game_client.screen_name}], "game", "screen_name")
+        print(f"Landed in {airport['ident']} with time {round(self.time_minutes)} min, refilling fuel for {self.refill_amount}")
+        # update fuel amount after landing
+        self.game_client.fuel_amount += self.refill_amount
+        # set current location
         self.game_client.location = airport["ident"]
         # converts time to current day by d = 24h * 60 min/h
         self.game_client.current_day = int(self.time_minutes/1440)
+        # pay the rent every 7th day
+        if self.game_client.current_day % 7 == 0:
+            # self.game_client.currency -= self.db.get_plane(self.game_client.screen_name)["rent"]
+            self.game_client.currency -= 1000
+
 
     def handle_encounter(self, enc_data: tuple, coords: tuple) -> bool:
         """
@@ -161,5 +158,5 @@ class Flying:
     
 if __name__ == "__main__":
     print("Running!")
-    #print(flying.get_midpoint((51.5072, 0.1276), (60.1699, 24.9384)))
+    
 
