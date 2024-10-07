@@ -33,11 +33,9 @@ def main_menu(game_client: GameClient):
             game_client.new_session()
             pr.renting_menu()
             fl.fly_menu(game_client.airport_type, search_radius)
-            exit(0)
         elif userInput == "2":
             game_client.load_session()
             fl.fly_menu(game_client.airport_type, search_radius)
-            exit(0)
         elif userInput == "3":
             print()
             continue
