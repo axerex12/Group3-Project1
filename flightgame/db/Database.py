@@ -347,7 +347,7 @@ class Database:
         else:
             return self.cursor.fetchall()
     
-    def fetch_data_row(self, table: str, column: str, operator: str, data: str) -> list:
+    def fetch_data_row(self, table: str, column: str, operator: str, data: str) -> dict:
         """
         Get the specific row from a table from the database
         :param table: name of the table
