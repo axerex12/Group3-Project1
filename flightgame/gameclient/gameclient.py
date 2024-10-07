@@ -65,10 +65,11 @@ class GameClient:
         self.current_day = data['current_day']
         self.rent_amount = int(self.rented_plane["fuel_consumption"]) + int(self.rented_plane["max_speed"]) * 50
         # set the airport type to be searched by the type of the plane
-        if (self.rented_plane["type"] == "helicopter"):
-            self.airport_type = "heliport"
-        else:
-            self.airport_type = "large_airport"
+        # if (self.rented_plane["type"] == "helicopter"):
+        #     self.airport_type = "heliport"
+        # else:
+        #     self.airport_type = "large_airport"
+        self.airport_type = "large_airport"
 
     def print_game_data(self):
         string = f"""_________________________________________

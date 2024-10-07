@@ -76,9 +76,9 @@ class Flying:
             
             # select the airport to fly to
             user_input = int(input("Selection: "))
-            while (user_input <= 0 and user_input >= len(airports_near) - 1):
-                print("invalid selection")
-                user_input = int(input("Selection: "))
+            # while (user_input <= 0 and user_input >= len(airports_near) - 1):
+            #     print("invalid selection")
+            #     user_input = int(input("Selection: "))
             #     user_input = int(input("Selection: ")) - 1
             
             # assign from airports_near to airport
