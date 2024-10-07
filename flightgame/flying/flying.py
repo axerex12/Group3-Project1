@@ -150,7 +150,7 @@ class Flying:
         # converts time to current day by d = 24h * 60 min/h
         self.game_client.current_day = int(self.time_minutes/1440)
         # pay every landing because why not
-        self.game_client.currency -= self.game_client.rent_amount
+        self.game_client.currency -= self.game_client.rent_amount * 0.2
         # pay the rent every 7th day
         # if (self.game_client.current_day % 7 == 0 and self.game_client.current_day != 0) and not self.game_client.rent_paid:
         #     print("Paying rent for the plane")
