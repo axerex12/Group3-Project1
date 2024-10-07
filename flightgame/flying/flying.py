@@ -26,7 +26,6 @@ class Flying:
         self.time_minutes = 0
         self.encounter_client = EncounterClient()
         self.refill_amount = 0
-        self.contract_client = ContractClient(self.db)
 
     def fly_menu(self, airport_type, distance):
         # encounter = encounters.Encounter()
