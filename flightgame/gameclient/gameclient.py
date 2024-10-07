@@ -1,4 +1,5 @@
 from flightgame.db.Database import Database
+from flightgame.contract.contract_client import ContractClient
 
 class GameClient:
     def __init__(self, db: Database):
@@ -14,6 +15,10 @@ class GameClient:
         self.cargo = []
         self.gameover = False
         self.rent_paid = False
+        # Initialize the ContractClient
+        self.contract_client = ContractClient(self.db)
+        # Initialize current_contract to None
+        self.current_contract = None
     
     def input_screen_name(self) -> str:
         while True:
@@ -39,6 +44,8 @@ class GameClient:
                             "fuel_amount": self.fuel_amount, "current_day": self.current_day,
                             "screen_name": self.screen_name, "rented_plane": self.rented_plane,
                           }], "game")
+        #Generoi pelaajan ensinmäisen contractin
+        self.current_contract = self.contract_client.contract_generator(self.screen_name)
 
     def load_session(self):
         data = self.db.fetch_data_row("game", "screen_name", '=', f'"{self.input_screen_name()}"')[0]
@@ -76,3 +83,17 @@ class GameClient:
         outputdata = [data]
         # print(outputdata)
         self.db.update_data(outputdata,"game","screen_name")
+
+    def check_contract_delivery(self):
+        """tarkistaa jos pelaaja on contractin päämäärässä."""
+        if self.current_contract:
+            if self.location == self.current_contract['destination_id']:
+                print("You have arrived at the destination airport!")
+                # Pay the player and generate a new contract
+                reward = self.current_contract['palkkio']
+                self.db.update_currency_amount(reward, "+", self.screen_name)
+                print(f"You have delivered the cargo! You earned {reward}€.")
+                # Generate a new contract
+                self.current_contract = self.contract_client.contract_generator(self.screen_name)
+            else:
+                print("This is not the correct destination for your contract.")

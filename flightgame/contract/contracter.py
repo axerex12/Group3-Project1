@@ -78,15 +78,3 @@ class ContractClient:
                     print("Virheellinen valinta. Valitse numero 1, 2 tai 3.")
             except ValueError:
                 print("Syötä numero 1-3.")
-
-    def contract_destination(self,chosen_contract, user):
-        """tarkistaa onko pelaaja saapunut kohde lento kenttään"""
-        reward = chosen_contract['palkkio']
-        current_airport = self.database.get_current_airport(user)
-
-        if current_airport["ident"] == chosen_contract["destination_id"]:
-            self.database.update_currency_amount(reward, "+", user)
-            print(f"Sait vietyä paketin sovittuun määränpäähän! Tässä on sinun palkkiosi!: {reward}€")
-            return self.contract_generator(user)  # Generate new contracts after successful delivery
-        else:
-            print("Et ole saapunut oikeaan lentokenttään. Yritä uudelleen.")

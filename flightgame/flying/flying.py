@@ -2,6 +2,7 @@
 from flightgame.gameclient.gameclient import GameClient
 from flightgame.flying.encounters import EncounterClient
 import random as rd
+from flightgame.contract.contracter import ContractClient
 import traceback
 
 
@@ -25,6 +26,7 @@ class Flying:
         self.time_minutes = 0
         self.encounter_client = EncounterClient()
         self.refill_amount = 0
+        self.contract_client = ContractClient(self.db)
 
     def fly_menu(self, airport_type, distance):
         # encounter = encounters.Encounter()
@@ -138,6 +140,8 @@ class Flying:
             self.game_client.rent_paid = True
         if (self.game_client.current_day % 7 != 0):
             self.game_client.rent_paid = False
+        #katsoo onko kohde lentokentässä
+        self.game_client.check_contract_delivery()
 
 
     def handle_encounter(self, enc_data: tuple, coords: tuple) -> bool:
