@@ -7,5 +7,6 @@ import mainMenu
 enc = EncounterClient()
 db = Database()
 gc = GameClient(db)
-
+db.add_data(Data.cargo,"cargo")
+db.add_data(Data.planes,"plane")
 mainMenu.main_menu(gc)

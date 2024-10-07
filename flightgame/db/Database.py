@@ -270,7 +270,7 @@ class Database:
         for item in data:
             columns = ','.join([str(name) for name, val in item.items()])
             values = ','.join([f"'{val}'" if isinstance(val, str) else str(val) for name, val in item.items()])
-            statement = f"INSERT INTO {table} ({columns}) VALUES ({values});"
+            statement = f"INSERT IGNORE INTO {table} ({columns}) VALUES ({values});"
             print(statement)
             self.cursor.execute(statement)
 
