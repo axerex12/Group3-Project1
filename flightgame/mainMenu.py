@@ -28,7 +28,7 @@ def main_menu(game_client: GameClient):
     print(f"## {gameName} ##\n1) New Session\n2) Load previous session\n3) Credits\n4) Exit")
 
     while True:
-        userInput = input()
+        userInput = input("> ")
         if userInput == "1":
             game_client.new_session()
             pr.renting_menu()
