@@ -73,13 +73,12 @@ class GameClient:
         data = self.db.fetch_data_row("game", "screen_name", '=', f'"{user}"')
         if data is not None:
             # print(data)
-            data = data[0]
             data['co2_consumed'] = self.co2_consumed
             data['co2_budget'] = self.co2_budget
             data['screen_name'] = user  # varmistaa että tallentaa samalla nimellä millä haettiin
-            data['location'] = self.location
+            data['location'] = self.location["ident"]
             data['currency'] = self.currency
-            data['rented_plane'] = self.rented_plane
+            data['rented_plane'] = self.rented_plane["id"]
             data['fuel_amount'] = self.fuel_amount
             data['current_day'] = self.current_day
             outputdata = [data]
