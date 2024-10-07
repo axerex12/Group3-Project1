@@ -42,7 +42,7 @@ class ContractClient:
         for _ in range(3):
             # airport = self.database.get_random_airport(1)[0]
             airport = self.database.get_airports_by_distance(current_airport["type"], 2000, user, 50)
-            airport = self.database.get_airport(airport[rand.randint(0, 49)]["ident"])
+            airport = self.database.get_airport(airport[rand.randint(0, len(airport) - 1)]["ident"])
             cargo = self.database.get_random_cargo(1)[0]
             palkkio = 0.2 * cargo['delivery_value']  # Reward is 20% of cargo value
             distance_to_airport = self.calculate_distance(current_airport['ident'], airport['ident'])
