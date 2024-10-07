@@ -48,4 +48,9 @@ class Planerenting:
                     self.gc.rented_plane = planes[userInput-1]
                     self.gc.currency = self.gc.currency - planes[userInput-1]['price']
                     self.gc.rent_amount = planes[userInput-1]['price']
+                    # select the airport type based on the type of the plane
+                    if (self.gc.rented_plane["type"] == "helicopter"):
+                        self.gc.airport_type = "heliport"
+                    else:
+                        self.gc.airport_type = "large_airport"
                     break
