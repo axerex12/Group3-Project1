@@ -294,7 +294,7 @@ class Database:
             sql = f"UPDATE {table} SET {', '.join(columns)} WHERE {id_column} = %s"
             values.append(id_value)
             self.cursor.execute(sql, values)
-    
+
     def update_fuel_amount(self, fuel_amount: float, operator: str, user: str):
         """
         Update the fuel amount
@@ -363,10 +363,7 @@ class Database:
             """
         self.cursor.execute(sql_get_data_row)
         if self.cursor.rowcount == 0:
-            metadata = self.cursor.description
-            column_names = [i[0] for i in metadata]
-            output = zip(column_names,[None]*len(column_names))
-            return output
+            return None
         else:
             return self.cursor.fetchone()
 
@@ -398,3 +395,19 @@ class Database:
         """
         sql_set_plane = f"UPDATE game SET rented_plane = {plane_id}, currency = currency-{price} WHERE screen_name = '{user}'"
         self.cursor.execute(sql_set_plane)
+
+    def user_exists_by_name(self, user: str) -> bool:
+        """
+        check if user exists by screen_name
+        :param user:
+        :return:
+        """
+        sql = f"""
+            SELECT screen_name
+            FROM game
+            WHERE screen_name = {user}
+        """
+        self.cursor.execute(sql)
+        if len(self.cursor.fetchall()) > 0:
+            return True
+        return False
