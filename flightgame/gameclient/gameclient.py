@@ -16,6 +16,7 @@ class GameClient:
         self.cargo = []
         self.gameover = False
         self.rent_paid = False
+        self.screen_name = ""
     
     def input_screen_name(self) -> str:
         while True:
@@ -24,18 +25,20 @@ class GameClient:
                 return screen_name
             except ValueError as e:
                 print(e)
-                return
+                return ""
             
     def new_session(self):
         """
         creates an user and adds it to the database
         """
         try:
-            self.screen_name = self.input_screen_name()
+            name = self.input_screen_name()
+            if self.db.user_exists_by_name(name):
+                return
+            self.screen_name = name
         except Exception as e:
             print(e)
             return
-
         self.db.add_data([{"co2_consumed": self.co2_consumed, "co2_budget": self.co2_budget,
                             "currency": self.currency, "location": self.location["ident"],
                             "fuel_amount": self.fuel_amount, "current_day": self.current_day,
@@ -72,17 +75,22 @@ class GameClient:
         """
         print(string)
 
-    def save_game_data(self, user):
+    def save_game_data(self, user) -> bool:
         data = self.db.fetch_data_row("game", "screen_name", '=', f'"{user}"')
-        # print(data)
-        data['co2_consumed'] = self.co2_consumed
-        data['co2_budget'] = self.co2_budget
-        data['screen_name'] = user #varmistaa että tallentaa samalla nimellä millä haettiin
-        data['location'] = self.location["ident"]
-        data['currency'] = self.currency
-        data['rented_plane'] = self.rented_plane["id"]
-        data['fuel_amount'] = self.fuel_amount
-        data['current_day'] = self.current_day
-        outputdata = [data]
-        # print(outputdata)
-        self.db.update_data(outputdata,"game","screen_name")
+        if data is not None:
+            # print(data)
+            data = data[0]
+            data['co2_consumed'] = self.co2_consumed
+            data['co2_budget'] = self.co2_budget
+            data['screen_name'] = user  # varmistaa että tallentaa samalla nimellä millä haettiin
+            data['location'] = self.location
+            data['currency'] = self.currency
+            data['rented_plane'] = self.rented_plane
+            data['fuel_amount'] = self.fuel_amount
+            data['current_day'] = self.current_day
+            outputdata = [data]
+            # print(outputdata)
+            self.db.update_data(outputdata, "game", "screen_name")
+            return True
+        else: return False
+
