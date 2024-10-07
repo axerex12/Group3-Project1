@@ -25,20 +25,17 @@ def main_menu(game_client: GameClient):
     //////////////////////////////////////////////////////////////
     """)
 
-    print(f"## {gameName} ##\n1) New Session\n2) Load previous session\n3) Credits\n4) Exit")
-
     #TODO: check player rented plane and change fly_meny to search for correct type
     while True:
+        print(f"## {gameName} ##\n1) New Session\n2) Load previous session\n3) Credits\n4) Exit")
         userInput = input("> ")
         if userInput == "1":
             game_client.new_session()
             pr.renting_menu()
             fl.fly_menu("large_airport", search_radius)
-            exit(0)
         elif userInput == "2":
             game_client.load_session()
             fl.fly_menu("large_airport", search_radius)
-            exit(0)
         elif userInput == "3":
             print()
             continue

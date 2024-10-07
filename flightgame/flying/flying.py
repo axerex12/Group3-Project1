@@ -44,7 +44,8 @@ class Flying:
 
         while not self.game_client.gameover:
             # save game data
-            self.game_client.save_game_data(self.game_client.screen_name)
+            if not self.game_client.save_game_data(self.game_client.screen_name):
+                return
             self.game_client.print_game_data()
 
             airports_near = self.db.get_airports_by_distance(airport_type, distance, self.game_client.screen_name,5)
@@ -119,7 +120,7 @@ class Flying:
         return int(plane["fuel_consumption"] * distance / 100) * 0.5
 
     def land(self, airport: dict):
-        if airport == None:
+        if airport is None:
             print("You got lost and you died")
             self.game_client.gameover = True
         #print(airport)
