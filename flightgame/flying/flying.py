@@ -127,14 +127,15 @@ class Flying:
         # update fuel amount after landing
         self.game_client.fuel_amount += self.refill_amount
         # set current location
-        self.game_client.location = airport["ident"]
+        self.game_client.location = self.db.get_airport(airport["ident"])
         # converts time to current day by d = 24h * 60 min/h
         self.game_client.current_day = int(self.time_minutes/1440)
         # pay the rent every 7th day
+        self.game_client.currency -= self.game_client.rent_amount
         if (self.game_client.current_day % 7 == 0 and self.game_client.current_day != 0) and not self.game_client.rent_paid:
             # self.game_client.currency -= self.db.get_plane(self.game_client.screen_name)["rent"]
             print("Paying rent for the plane")
-            self.game_client.currency -= 1000
+            self.game_client.currency -= self.game_client.rent_amount
             self.game_client.rent_paid = True
         if (self.game_client.current_day % 7 != 0):
             self.game_client.rent_paid = False
