@@ -49,8 +49,6 @@ class GameClient:
                             "fuel_amount": self.fuel_amount, "current_day": self.current_day,
                             "screen_name": self.screen_name,
                           }], "game")
-        #Generoi pelaajan ensinmäisen contractin
-        self.current_contract = self.contract_client.contract_generator(self.screen_name)
 
     def load_session(self):
         data = self.db.fetch_data_row("game", "screen_name", '=', f'"{self.input_screen_name()}"')
@@ -101,15 +99,22 @@ class GameClient:
         else: return False
 
     def check_contract_delivery(self):
-        """tarkistaa jos pelaaja on contractin päämäärässä."""
-        if self.current_contract:
-            if self.location == self.current_contract['destination_id']:
-                print("You have arrived at the destination airport!")
-                # Pay the player and generate a new contract
-                reward = self.current_contract['palkkio']
-                self.db.update_currency_amount(reward, "+", self.screen_name)
-                print(f"You have delivered the cargo! You earned {reward}€.")
-                # Generate a new contract
-                self.current_contract = self.contract_client.contract_generator(self.screen_name)
-            else:
-                print("This is not the destination for your contract.")
+        """Tarkistaa jos pelaaja on contractin päämäärässä tai jos contractia ei ole."""
+
+        # If no contract, generate a new one
+        if not self.current_contract:
+            print("You currently have no active contract. Generating a new one...")
+            self.current_contract = self.contract_client.contract_generator(self.screen_name)
+            return
+
+        # Check if the player has reached the destination
+        if self.location == self.current_contract['destination_id']:
+            print("You have arrived at the destination airport!")
+            # Pay the player and generate a new contract
+            reward = self.current_contract['palkkio']
+            self.db.update_currency_amount(reward, "+", self.screen_name)
+            print(f"You have delivered the cargo! You earned {reward}€.")
+            # Generate a new contract
+            self.current_contract = self.contract_client.contract_generator(self.screen_name)
+        else:
+            print("This is not the destination for your contract.")
