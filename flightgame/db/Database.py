@@ -295,7 +295,7 @@ class Database:
             values.append(id_value)
             self.cursor.execute(sql, values)
     
-    def update_fuel_amount(self, fuel_amount: float, operator: str, user: str) -> not str:
+    def update_fuel_amount(self, fuel_amount: float, operator: str, user: str):
         """
         Update the fuel amount
         :param fuel_amount:  of fuel to be added or subtracted
@@ -368,7 +368,7 @@ class Database:
             output = zip(column_names,[None]*len(column_names))
             return output
         else:
-            return self.cursor.fetchall()
+            return self.cursor.fetchone()
 
     def fetch_data_max(self, table: str, data: str):
         """
