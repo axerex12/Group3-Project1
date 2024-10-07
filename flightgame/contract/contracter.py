@@ -1,4 +1,5 @@
 from flightgame.db.Database import Database
+import random as rand
 from geopy import distance
 
 class ContractClient:
@@ -29,7 +30,7 @@ class ContractClient:
         print(f"Palkkio: {contract['palkkio']}€")
         print(f"Etäisyys nykyisestä lentokentästä: {contract['distance']:.2f} km")
 
-    def contract_generator(self, user: str) -> dict:
+    def contract_generator(self, user: str, current_airport) -> dict:
         """Generoi 3 contractia pelaajalle ja antaa niistä infoa."""
         contracts = []
         current_airport = self.database.get_current_airport(user)
@@ -39,7 +40,9 @@ class ContractClient:
             return {}
 
         for _ in range(3):
-            airport = self.database.get_random_airport(1)[0]
+            # airport = self.database.get_random_airport(1)[0]
+            airport = self.database.get_airports_by_distance(current_airport["type"], 2000, user, 50)
+            airport = self.database.get_airport(airport[rand.randint(0, 49)]["ident"])
             cargo = self.database.get_random_cargo(1)[0]
             palkkio = 0.2 * cargo['delivery_value']  # Reward is 20% of cargo value
             distance_to_airport = self.calculate_distance(current_airport['ident'], airport['ident'])

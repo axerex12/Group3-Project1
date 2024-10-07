@@ -157,7 +157,7 @@ class Flying:
         #     self.game_client.rent_paid = True
         # if (self.game_client.current_day % 7 != 0):
             # self.game_client.rent_paid = False
-        self.game_client.check_contract_delivery()
+        self.game_client.check_contract_delivery(self.db.get_airport(airport["ident"]))
 
     def handle_encounter(self, enc_data: tuple, coords: tuple) -> bool:
         """

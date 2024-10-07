@@ -110,7 +110,7 @@ class Database:
         :return: current airport or None.
         """
         sql_fetch_current_airport = f"""
-            SELECT name, ident, latitude_deg, longitude_deg
+            SELECT *
             FROM airport
             INNER JOIN game ON location = ident
             WHERE screen_name = "{user}"

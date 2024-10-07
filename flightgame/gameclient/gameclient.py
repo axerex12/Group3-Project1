@@ -98,13 +98,13 @@ class GameClient:
             return True
         else: return False
 
-    def check_contract_delivery(self):
+    def check_contract_delivery(self, current_airport):
         """Tarkistaa jos pelaaja on contractin päämäärässä tai jos contractia ei ole."""
 
         # If no contract, generate a new one
         if not self.current_contract:
             print("You currently have no active contract. Generating a new one...")
-            self.current_contract = self.contract_client.contract_generator(self.screen_name)
+            self.current_contract = self.contract_client.contract_generator(self.screen_name, current_airport)
             return
 
         # Check if the player has reached the destination
@@ -115,6 +115,6 @@ class GameClient:
             self.db.update_currency_amount(reward, "+", self.screen_name)
             print(f"You have delivered the cargo! You earned {reward}€.")
             # Generate a new contract
-            self.current_contract = self.contract_client.contract_generator(self.screen_name)
+            self.current_contract = self.contract_client.contract_generator(self.screen_name, current_airport)
         else:
             print("This is not the destination for your contract.")
