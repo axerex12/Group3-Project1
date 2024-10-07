@@ -1,5 +1,5 @@
 from flightgame.db.Database import Database
-from flightgame.contract.contract_client import ContractClient
+from flightgame.contract.contracter import ContractClient
 
 class GameClient:
     def __init__(self, db: Database):
