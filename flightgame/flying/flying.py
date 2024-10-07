@@ -86,6 +86,12 @@ class Flying:
                 # adding flight time to player
                 self.time_minutes += airport["distance"]/self.db.get_plane(self.game_client.screen_name)["max_speed"]*60
                 # land and update fuel, date, location
+                self.game_client.fuel_amount -= self.calculate_spent_fuel(airport["distance"])
+                # check fuel amount and quit if under 0
+                if self.game_client.fuel_amount <= 0:
+                    print("Fuel ran out and you crashed!")
+                    self.game_client.gameover = True
+                    break
                 self.land(airport)
 
             # asking if user wants to quit
@@ -110,7 +116,7 @@ class Flying:
     def calculate_spent_fuel(self, distance) -> int:
         plane: dict = self.db.get_plane(self.game_client.screen_name)
         # return used fuel based on L/100km
-        return int(plane["fuel_consumption"] * distance / 100)
+        return int(plane["fuel_consumption"] * distance / 100) * 0.5
 
     def land(self, airport: dict):
         if airport == None:

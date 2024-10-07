@@ -34,15 +34,15 @@ def main_menu(game_client: GameClient):
             game_client.new_session()
             pr.renting_menu()
             fl.fly_menu("large_airport", search_radius)
-            exit(1)
+            exit(0)
         elif userInput == "2":
             game_client.load_session()
             fl.fly_menu("large_airport", search_radius)
-            exit(1)
+            exit(0)
         elif userInput == "3":
             print()
             continue
         elif userInput == "4":
-            exit(1)
+            exit(0)
         else:
             print("Invalid input, retry.")
