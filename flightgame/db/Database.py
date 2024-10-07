@@ -77,10 +77,11 @@ class Database:
         cursor.execute("""
             ALTER TABLE game 
                 MODIFY COLUMN id INT(11) AUTO_INCREMENT,
+                MODIFY COLUMN IF EXISTS current_day FLOAT,
                 ADD COLUMN IF NOT EXISTS (currency INT(32),
                 rented_plane INT(8),
                 fuel_amount INT (8),
-                current_day INT (8),
+                current_day FLOAT,
                 FOREIGN KEY (rented_plane) REFERENCES plane(id)
                 )
         """)
@@ -293,8 +294,8 @@ class Database:
             sql = f"UPDATE {table} SET {', '.join(columns)} WHERE {id_column} = %s"
             values.append(id_value)
             self.cursor.execute(sql, values)
-    
-    def update_fuel_amount(self, fuel_amount: float, operator: str, user: str) -> not str:
+
+    def update_fuel_amount(self, fuel_amount: float, operator: str, user: str):
         """
         Update the fuel amount
         :param fuel_amount:  of fuel to be added or subtracted
@@ -346,7 +347,7 @@ class Database:
         else:
             return self.cursor.fetchall()
     
-    def fetch_data_row(self, table: str, column: str, operator: str, data: str) -> list:
+    def fetch_data_row(self, table: str, column: str, operator: str, data: str) -> dict:
         """
         Get the specific row from a table from the database
         :param table: name of the table
@@ -362,12 +363,9 @@ class Database:
             """
         self.cursor.execute(sql_get_data_row)
         if self.cursor.rowcount == 0:
-            metadata = self.cursor.description
-            column_names = [i[0] for i in metadata]
-            output = zip(column_names,[None]*len(column_names))
-            return output
+            return None
         else:
-            return self.cursor.fetchall()
+            return self.cursor.fetchone()
 
     def fetch_data_max(self, table: str, data: str):
         """
@@ -397,3 +395,19 @@ class Database:
         """
         sql_set_plane = f"UPDATE game SET rented_plane = {plane_id}, currency = currency-{price} WHERE screen_name = '{user}'"
         self.cursor.execute(sql_set_plane)
+
+    def user_exists_by_name(self, user: str) -> bool:
+        """
+        check if user exists by screen_name
+        :param user:
+        :return:
+        """
+        sql = f"""
+            SELECT screen_name
+            FROM game
+            WHERE screen_name = '{user}'
+        """
+        self.cursor.execute(sql)
+        if len(self.cursor.fetchall()) > 0:
+            return True
+        return False

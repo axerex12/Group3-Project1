@@ -45,7 +45,7 @@ class Planerenting:
                     print("Not a valid index! Try again!")
                     continue
                 else:
-                    planes[userInput-1]['price'] = 0
-                    self.gc.rented_plane = planes[userInput-1]['id']
+                    self.gc.rented_plane = planes[userInput-1]
                     self.gc.currency = self.gc.currency - planes[userInput-1]['price']
+                    self.gc.rent_amount = planes[userInput-1]['price']
                     break

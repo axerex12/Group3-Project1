@@ -44,7 +44,8 @@ class Flying:
 
         while not self.game_client.gameover:
             # save game data
-            self.game_client.save_game_data(self.game_client.screen_name)
+            if not self.game_client.save_game_data(self.game_client.screen_name):
+                return
             self.game_client.print_game_data()
 
             airports_near = self.db.get_airports_by_distance(airport_type, distance, self.game_client.screen_name,5)
@@ -119,7 +120,7 @@ class Flying:
         return int(plane["fuel_consumption"] * distance / 100) * 0.5
 
     def land(self, airport: dict):
-        if airport == None:
+        if airport is None:
             print("You got lost and you died")
             self.game_client.gameover = True
         #print(airport)
@@ -127,20 +128,19 @@ class Flying:
         # update fuel amount after landing
         self.game_client.fuel_amount += self.refill_amount
         # set current location
-        self.game_client.location = airport["ident"]
+        self.game_client.location = self.db.get_airport(airport["ident"])
         # converts time to current day by d = 24h * 60 min/h
         self.game_client.current_day = int(self.time_minutes/1440)
+        # pay every landing because why not
+        self.game_client.currency -= self.game_client.rent_amount
         # pay the rent every 7th day
-        if (self.game_client.current_day % 7 == 0 and self.game_client.current_day != 0) and not self.game_client.rent_paid:
-            # self.game_client.currency -= self.db.get_plane(self.game_client.screen_name)["rent"]
-            print("Paying rent for the plane")
-            self.game_client.currency -= 1000
-            self.game_client.rent_paid = True
-        if (self.game_client.current_day % 7 != 0):
-            self.game_client.rent_paid = False
-        #katsoo onko kohde lentokentässä
+        # if (self.game_client.current_day % 7 == 0 and self.game_client.current_day != 0) and not self.game_client.rent_paid:
+        #     print("Paying rent for the plane")
+        #     self.game_client.currency -= self.game_client.rent_amount
+        #     self.game_client.rent_paid = True
+        # if (self.game_client.current_day % 7 != 0):
+            # self.game_client.rent_paid = False
         self.game_client.check_contract_delivery()
-
 
     def handle_encounter(self, enc_data: tuple, coords: tuple) -> bool:
         """
